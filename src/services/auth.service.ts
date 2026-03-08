@@ -1,14 +1,23 @@
+import { FirebaseError } from 'firebase/app';
 import { signInWithEmailAndPassword, signOut } from 'firebase/auth';
 import { auth } from '@/firebase/client';
 
-const FAKE_AUTH_DELAY_MS = 900;
+function mapAuthError(error: unknown) {
+  if (error instanceof FirebaseError) {
+    if (error.code === 'auth/invalid-credential' || error.code === 'auth/wrong-password' || error.code === 'auth/user-not-found') {
+      return 'E-mail ou senha inválidos.';
+    }
 
-function shouldUseMockAuth() {
-  return !process.env.NEXT_PUBLIC_FIREBASE_API_KEY || process.env.NEXT_PUBLIC_USE_MOCK_AUTH === 'true';
-}
+    if (error.code === 'auth/too-many-requests') {
+      return 'Muitas tentativas de acesso. Aguarde alguns minutos e tente novamente.';
+    }
 
-function wait(delay: number) {
-  return new Promise((resolve) => setTimeout(resolve, delay));
+    if (error.code === 'auth/network-request-failed') {
+      return 'Sem conexão no momento. Verifique a internet e tente novamente.';
+    }
+  }
+
+  return 'Não foi possível entrar agora. Tente novamente em instantes.';
 }
 
 export async function loginWithEmail(email: string, password: string) {
@@ -16,25 +25,15 @@ export async function loginWithEmail(email: string, password: string) {
     throw new Error('Autenticação Firebase não configurada.');
   }
 
-  return signInWithEmailAndPassword(auth, email, password);
+  return signInWithEmailAndPassword(auth, email.trim().toLowerCase(), password);
 }
 
 export async function authenticateUser(email: string, password: string) {
-  if (shouldUseMockAuth()) {
-    await wait(FAKE_AUTH_DELAY_MS);
-
-    if (password.length < 6) {
-      throw new Error('A senha precisa ter ao menos 6 caracteres.');
-    }
-
-    return { provider: 'mock' as const, email };
-  }
-
   try {
     const credential = await loginWithEmail(email, password);
     return { provider: 'firebase' as const, email: credential.user.email ?? email };
-  } catch {
-    throw new Error('Não foi possível entrar. Verifique e-mail e senha e tente novamente.');
+  } catch (error) {
+    throw new Error(mapAuthError(error));
   }
 }
 
@@ -43,5 +42,5 @@ export async function logout() {
     return;
   }
 
-  return signOut(auth);
+  await signOut(auth);
 }

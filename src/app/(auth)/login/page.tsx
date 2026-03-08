@@ -1,6 +1,15 @@
+import { cookies } from 'next/headers';
+import { redirect } from 'next/navigation';
 import { LoginForm } from '@/components/auth/login-form';
+import { AUTH_SESSION_COOKIE } from '@/hooks/use-auth';
 
 export default function LoginPage() {
+  const isSessionActive = cookies().get(AUTH_SESSION_COOKIE)?.value === '1';
+
+  if (isSessionActive) {
+    redirect('/agenda');
+  }
+
   return (
     <main className="safe-area-top safe-area-x flex min-h-dvh items-center justify-center bg-background px-3 py-6 sm:px-6 sm:py-8">
       <div className="w-full max-w-5xl pb-[max(0.75rem,env(safe-area-inset-bottom))]">

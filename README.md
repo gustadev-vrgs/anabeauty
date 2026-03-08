@@ -13,11 +13,21 @@ Base inicial de um sistema web responsivo de agendamento para profissional da á
 
 ## Rotas iniciais
 
-- `/login`
-- `/agenda`
-- `/clientes`
-- `/servicos`
-- `/dashboard`
+- `/login` (pública)
+- `/agenda` (privada)
+- `/clientes` (privada)
+- `/servicos` (privada)
+- `/dashboard` (privada)
+
+## Segurança implementada
+
+- Proteção de rotas privadas com `middleware.ts` + guard no App Router.
+- Redirecionamento automático de não autenticado para `/login`.
+- Tratamento de loading de autenticação para evitar quebra de UX.
+- Base para RBAC com permissões por papel (`admin`, `professional`).
+- Sanitização/normalização de payloads antes de persistir no Firestore.
+- Confirmação obrigatória para exclusões de clientes e serviços.
+- Regras Firestore preparadas para leitura/escrita apenas por usuário autenticado proprietário.
 
 ## Estrutura de pastas
 
@@ -30,6 +40,7 @@ src/
     (dashboard)/servicos/
     (dashboard)/dashboard/
   components/
+    auth/
     ui/
     layout/
     calendar/
@@ -37,6 +48,7 @@ src/
     clients/
     services/
   lib/
+    security/
   hooks/
   types/
   services/
@@ -56,6 +68,13 @@ NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=
 NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=
 NEXT_PUBLIC_FIREBASE_APP_ID=
 ```
+
+> Somente variáveis com `NEXT_PUBLIC_` devem ser expostas ao cliente.
+
+## Firestore Security Rules
+
+- Arquivo recomendado: `firestore.rules`.
+- Faça deploy das regras com Firebase CLI (`firebase deploy --only firestore:rules`).
 
 ## Rodar localmente
 

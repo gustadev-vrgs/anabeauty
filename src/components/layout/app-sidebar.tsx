@@ -1,8 +1,10 @@
 'use client';
 
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { cn } from '@/utils/cn';
+import { Button } from '@/components/ui/button';
+import { logout } from '@/services/auth.service';
 
 const links = [
   { href: '/agenda', label: 'Agenda' },
@@ -17,6 +19,12 @@ function isPathActive(pathname: string, href: string) {
 
 export function AppSidebar() {
   const pathname = usePathname();
+  const router = useRouter();
+
+  async function handleLogout() {
+    await logout();
+    router.replace('/login');
+  }
 
   return (
     <>
@@ -53,6 +61,10 @@ export function AppSidebar() {
             );
           })}
         </nav>
+
+        <Button variant="secondary" className="mt-6 w-full" onClick={() => void handleLogout()}>
+          Sair
+        </Button>
       </aside>
 
       <nav className="safe-area-bottom safe-area-x fixed inset-x-2 bottom-2 z-50 rounded-2xl border border-coffee-cappuccino/70 bg-coffee-latte/95 p-2 shadow-elevated backdrop-blur md:hidden" aria-label="Navegação mobile">
