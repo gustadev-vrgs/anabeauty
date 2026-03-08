@@ -4,15 +4,43 @@
 
 :root {
   color-scheme: light;
+  --background: #f5e6d3;
+  --foreground: #2a1a13;
+
+  --primary: #a86f47;
+  --primary-foreground: #f5e6d3;
+
+  --secondary: #d2aa7b;
+  --secondary-foreground: #4c2b1c;
+
+  --muted: #ecc9a8;
+  --muted-foreground: #6b5e29;
+
+  --accent: #c58a53;
+  --accent-foreground: #2a1a13;
+
+  --border: #d2aa7b;
+
+  --destructive: #8c5a3a;
+  --destructive-foreground: #f5e6d3;
+
+  --ring: #6b5e29;
 }
 
 * {
   box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+}
+
+html,
+body {
+  margin: 0;
+  min-height: 100%;
 }
 
 body {
-  margin: 0;
-  @apply bg-coffee-latte text-coffee-blackCoffee antialiased;
+  @apply bg-background text-foreground antialiased;
+  font-feature-settings: 'kern' 1, 'liga' 1;
 }
 
 a {
@@ -25,4 +53,21 @@ select,
 textarea,
 button {
   font: inherit;
+}
+
+input,
+textarea,
+select {
+  appearance: none;
+  -webkit-appearance: none;
+}
+
+:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+}
+
+::selection {
+  background: #d2aa7b;
+  color: #2a1a13;
 }
