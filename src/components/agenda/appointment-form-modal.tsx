@@ -1,7 +1,9 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Button } from '@/components/ui/button';
+import { AutosaveIndicator } from '@/components/ui/autosave-indicator';
+import { useFormDraft } from '@/hooks/use-form-draft';
 import type {
   AppointmentClient,
   AppointmentConflict,
@@ -17,7 +19,7 @@ type AppointmentFormModalProps = {
   existingConflicts: AppointmentConflict[];
   initialDate: string;
   initialStartTime?: string;
-  onSubmit: (values: AppointmentFormValues) => void;
+  onSubmit: (values: AppointmentFormValues) => Promise<void>;
   onQuickCreateClient?: () => void;
 };
 
@@ -84,6 +86,7 @@ export function AppointmentFormModal({
     observacoes: '',
   });
   const [errorMessage, setErrorMessage] = useState('');
+  const [isSaving, setIsSaving] = useState(false);
 
   useEffect(() => {
     if (!open) {
@@ -98,22 +101,35 @@ export function AppointmentFormModal({
     };
   }, [open]);
 
+  const initialFormValues = useMemo(() => ({
+    date: initialDate,
+    horaInicio: initialStartTime ?? '',
+    servicoId: '',
+    clienteId: '',
+    duracao: defaultDurationMinutes,
+    valor: 0,
+    observacoes: '',
+  }), [initialDate, initialStartTime]);
+
+  const handleRestoreDraft = useCallback((nextValues: AppointmentFormValues) => {
+    setFormValues(nextValues);
+  }, []);
+
+  const { clearDraft, draftSavedAt, wasRestored } = useFormDraft({
+    draftKey: 'draft-appointment-form',
+    enabled: open,
+    values: formValues,
+    initialValues: initialFormValues,
+    onRestore: handleRestoreDraft,
+  });
+
   useEffect(() => {
     if (!open) {
       return;
     }
 
-    setFormValues({
-      date: initialDate,
-      horaInicio: initialStartTime ?? '',
-      servicoId: '',
-      clienteId: '',
-      duracao: defaultDurationMinutes,
-      valor: 0,
-      observacoes: '',
-    });
     setErrorMessage('');
-  }, [initialDate, initialStartTime, open]);
+  }, [open]);
 
   const conflict = useMemo(
     () => findAppointmentConflict(formValues, existingConflicts),
@@ -140,7 +156,7 @@ export function AppointmentFormModal({
     }));
   }
 
-  function handleSchedule() {
+  async function handleSchedule() {
     if (!formValues.date || !formValues.horaInicio || !formValues.servicoId || !formValues.clienteId) {
       setErrorMessage('Preencha data, hora, serviço e cliente para continuar.');
       return;
@@ -152,8 +168,17 @@ export function AppointmentFormModal({
     }
 
     setErrorMessage('');
-    onSubmit(formValues);
-    onClose();
+    setIsSaving(true);
+
+    try {
+      await onSubmit(formValues);
+      clearDraft();
+      onClose();
+    } catch {
+      setErrorMessage('Não foi possível salvar agora. Seu rascunho ficou salvo para tentar novamente.');
+    } finally {
+      setIsSaving(false);
+    }
   }
 
   const selectedClient = clients.find((client) => client.id === formValues.clienteId);
@@ -167,6 +192,7 @@ export function AppointmentFormModal({
           <p className="text-xs font-semibold uppercase tracking-[0.2em] text-coffee-espresso">Agenda</p>
           <h2 className="text-xl font-semibold text-coffee-darkRoast sm:text-2xl">Novo agendamento</h2>
           <p className="text-sm text-coffee-espresso">Preencha os dados abaixo para reservar o horário.</p>
+          <AutosaveIndicator savedAt={draftSavedAt} restored={wasRestored} />
         </header>
 
         <div className="grid gap-4 sm:grid-cols-2">
@@ -292,8 +318,8 @@ export function AppointmentFormModal({
           <Button variant="secondary" className="h-12" onClick={onClose}>
             Cancelar
           </Button>
-          <Button className="h-12 bg-coffee-mocha text-white hover:bg-coffee-hazelnut" onClick={handleSchedule}>
-            Agendar
+          <Button disabled={isSaving} className="h-12 bg-coffee-mocha text-white hover:bg-coffee-hazelnut" onClick={handleSchedule}>
+            {isSaving ? 'Salvando...' : 'Agendar'}
           </Button>
         </div>
       </section>

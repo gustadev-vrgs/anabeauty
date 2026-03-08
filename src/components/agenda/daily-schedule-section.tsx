@@ -4,10 +4,6 @@ import { useMemo, useState } from 'react';
 import { AppointmentFormModal } from '@/components/agenda/appointment-form-modal';
 import { TimeBlockModal, type TimeBlockFormValues } from '@/components/agenda/time-block-modal';
 import {
-  mockAppointmentClients,
-  mockAppointmentServices,
-} from '@/components/agenda/appointment-form-mocks';
-import {
   formatDateKey,
   generateHalfHourSlots,
   mockDailyAppointments,
@@ -16,6 +12,12 @@ import {
   type ScheduleBlock,
 } from '@/components/agenda/mock-daily-schedule';
 import { TimeGrid } from '@/components/agenda/time-grid';
+import { useCachedCollection } from '@/hooks/use-cached-collection';
+import { listClients } from '@/services/firestore/clients.firestore';
+import { createAppointment, listAppointments } from '@/services/firestore/appointments.firestore';
+import { createTimeBlock, listTimeBlocks } from '@/services/firestore/time-blocks.firestore';
+import { listServices } from '@/services/firestore/services.firestore';
+import type { Appointment, Client, Service, TimeBlock } from '@/types';
 
 type DailyScheduleSectionProps = {
   selectedDate: Date;
@@ -31,22 +33,73 @@ function sortTimes(left: string, right: string) {
   return leftValue - rightValue;
 }
 
+function buildEndTime(startTime: string, duration: number) {
+  const [hour, minute] = startTime.split(':').map(Number);
+  const startMinutes = hour * 60 + minute;
+  const endMinutes = startMinutes + duration;
+  const endHour = String(Math.floor(endMinutes / 60)).padStart(2, '0');
+  const endMinute = String(endMinutes % 60).padStart(2, '0');
+
+  return `${endHour}:${endMinute}`;
+}
+
 export function DailyScheduleSection({ selectedDate }: DailyScheduleSectionProps) {
   const dateKey = formatDateKey(selectedDate);
+
+  const { data: clients } = useCachedCollection<Client>({ cacheKey: 'clients', loader: listClients });
+  const { data: services } = useCachedCollection<Service>({ cacheKey: 'services', loader: listServices });
+  const { data: appointmentsData, updateCache: updateAppointmentsCache } = useCachedCollection<Appointment>({
+    cacheKey: 'appointments',
+    loader: listAppointments,
+  });
+  const { data: blocksData, updateCache: updateBlocksCache } = useCachedCollection<TimeBlock>({
+    cacheKey: 'timeBlocks',
+    loader: listTimeBlocks,
+  });
 
   const defaultSlots = useMemo(() => generateHalfHourSlots(8, 20), []);
   const [isAppointmentModalOpen, setIsAppointmentModalOpen] = useState(false);
   const [isBlockModalOpen, setIsBlockModalOpen] = useState(false);
   const [prefilledStartTime, setPrefilledStartTime] = useState<string | undefined>(undefined);
-  const [createdAppointments, setCreatedAppointments] = useState<ScheduleAppointment[]>([]);
-  const [createdBlocks, setCreatedBlocks] = useState<ScheduleBlock[]>([]);
   const [customSlotsByDate, setCustomSlotsByDate] = useState<Record<string, string[]>>({});
   const [newCustomTime, setNewCustomTime] = useState('');
 
-  const appointments = [...mockDailyAppointments, ...createdAppointments].filter(
-    (appointment) => appointment.date === dateKey,
+  const appointmentScheduleItems = useMemo(
+    () =>
+      appointmentsData.map(
+        (appointment) =>
+          ({
+            id: appointment.id,
+            date: appointment.date,
+            startTime: appointment.startTime,
+            endTime: appointment.endTime,
+            clientName: appointment.clientName,
+            procedureName: appointment.serviceName,
+          }) satisfies ScheduleAppointment,
+      ),
+    [appointmentsData],
   );
-  const blocks = [...mockDailyBlocks, ...createdBlocks].filter((block) => block.date === dateKey);
+
+  const blockScheduleItems = useMemo(
+    () =>
+      blocksData.map(
+        (block) =>
+          ({
+            id: block.id,
+            date: block.date,
+            startTime: block.startTime,
+            endTime: block.endTime,
+            reason: block.reason,
+            blockType: block.blockType,
+            notes: block.notes,
+          }) satisfies ScheduleBlock,
+      ),
+    [blocksData],
+  );
+
+  const appointments = [...mockDailyAppointments, ...appointmentScheduleItems].filter((appointment) => appointment.date === dateKey);
+  const blocks = [...mockDailyBlocks, ...blockScheduleItems].filter((block) => block.date === dateKey);
+
   const appointmentConflicts = [
     ...appointments.map((appointment) => ({
       startTime: appointment.startTime,
@@ -62,9 +115,7 @@ export function DailyScheduleSection({ selectedDate }: DailyScheduleSectionProps
 
   const slots = useMemo(() => {
     const customSlotsForDay = customSlotsByDate[dateKey] ?? [];
-
     const dynamicSlots = [...appointments.map((item) => item.startTime), ...blocks.map((item) => item.startTime)];
-
     return [...new Set([...defaultSlots, ...customSlotsForDay, ...dynamicSlots])].sort(sortTimes);
   }, [appointments, blocks, customSlotsByDate, dateKey, defaultSlots]);
 
@@ -82,7 +133,6 @@ export function DailyScheduleSection({ selectedDate }: DailyScheduleSectionProps
 
     setCustomSlotsByDate((previousSlots) => {
       const daySlots = previousSlots[dateKey] ?? [];
-
       if (daySlots.includes(newCustomTime) || defaultSlots.includes(newCustomTime)) {
         return previousSlots;
       }
@@ -96,67 +146,40 @@ export function DailyScheduleSection({ selectedDate }: DailyScheduleSectionProps
     setNewCustomTime('');
   }
 
-  function handleNewAppointment() {
-    setPrefilledStartTime(undefined);
-    setIsAppointmentModalOpen(true);
-  }
-
-  function handleBlockSchedule() {
-    setIsBlockModalOpen(true);
-  }
-
-  function handleOpenClientRegister() {
-    // Placeholder de UX até integração com cadastro de clientes real.
-    // eslint-disable-next-line no-console
-    console.log('Abrir cadastro de nova cliente');
-  }
-
-  function handleEditAppointment(appointment: ScheduleAppointment) {
-    // Placeholder de UX até integração com edição real.
-    // eslint-disable-next-line no-console
-    console.log('Editar agendamento', appointment.id);
-  }
-
-  function handleQuickCreate(time: string) {
-    setPrefilledStartTime(time);
-    setIsAppointmentModalOpen(true);
-  }
-
-  function buildEndTime(startTime: string, duration: number) {
-    const [hour, minute] = startTime.split(':').map(Number);
-    const startMinutes = hour * 60 + minute;
-    const endMinutes = startMinutes + duration;
-    const endHour = String(Math.floor(endMinutes / 60)).padStart(2, '0');
-    const endMinute = String(endMinutes % 60).padStart(2, '0');
-
-    return `${endHour}:${endMinute}`;
-  }
-
-  function handleCreateAppointment(values: {
+  async function handleCreateAppointment(values: {
     date: string;
     horaInicio: string;
     servicoId: string;
     clienteId: string;
     duracao: number;
+    valor: number;
+    observacoes: string;
   }) {
-    const service = mockAppointmentServices.find((item) => item.id === values.servicoId);
-    const client = mockAppointmentClients.find((item) => item.id === values.clienteId);
+    const service = services.find((item) => item.id === values.servicoId);
+    const client = clients.find((item) => item.id === values.clienteId);
 
     if (!service || !client) {
-      return;
+      throw new Error('Dados inválidos para salvar agendamento');
     }
 
-    setCreatedAppointments((previous) => [
-      ...previous,
-      {
-        id: `apt-local-${Date.now()}`,
-        date: values.date,
-        startTime: values.horaInicio,
-        endTime: buildEndTime(values.horaInicio, values.duracao),
-        clientName: client.name,
-        procedureName: service.name,
-      },
-    ]);
+    const payload: Appointment = {
+      id: `apt-${Date.now()}`,
+      clientId: client.id,
+      clientName: client.name,
+      serviceId: service.id,
+      serviceName: service.name,
+      date: values.date,
+      startTime: values.horaInicio,
+      endTime: buildEndTime(values.horaInicio, values.duracao),
+      durationMinutes: values.duracao,
+      price: values.valor,
+      status: 'agendado',
+      notes: values.observacoes,
+      createdAt: new Date().toISOString(),
+    };
+
+    await createAppointment(payload);
+    updateAppointmentsCache((previous) => [payload, ...previous]);
   }
 
   function createDateRange(startDate: string, endDate: string) {
@@ -172,7 +195,7 @@ export function DailyScheduleSection({ selectedDate }: DailyScheduleSectionProps
     return dates;
   }
 
-  function handleCreateTimeBlock(values: TimeBlockFormValues) {
+  async function handleCreateTimeBlock(values: TimeBlockFormValues) {
     const coveredDates = createDateRange(values.dataInicio, values.dataFim);
 
     const generatedBlocks = coveredDates.map((currentDate, index) => {
@@ -198,17 +221,19 @@ export function DailyScheduleSection({ selectedDate }: DailyScheduleSectionProps
       }
 
       return {
-        id: `blk-local-${Date.now()}-${currentDate}`,
+        id: `blk-${Date.now()}-${currentDate}`,
         date: currentDate,
         startTime,
         endTime,
         reason: values.observacoes || 'Horário bloqueado',
         blockType: values.tipoBloqueio,
         notes: values.observacoes,
-      } satisfies ScheduleBlock;
+        createdAt: new Date().toISOString(),
+      } satisfies TimeBlock;
     });
 
-    setCreatedBlocks((previous) => [...previous, ...generatedBlocks]);
+    await Promise.all(generatedBlocks.map((item) => createTimeBlock(item)));
+    updateBlocksCache((previous) => [...generatedBlocks, ...previous]);
   }
 
   return (
@@ -220,18 +245,10 @@ export function DailyScheduleSection({ selectedDate }: DailyScheduleSectionProps
         </div>
 
         <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
-          <button
-            type="button"
-            onClick={handleNewAppointment}
-            className="min-h-12 rounded-xl border border-coffee-mocha bg-coffee-mocha px-4 text-sm font-semibold text-white transition hover:bg-coffee-hazelnut"
-          >
+          <button type="button" onClick={() => { setPrefilledStartTime(undefined); setIsAppointmentModalOpen(true); }} className="min-h-12 rounded-xl border border-coffee-mocha bg-coffee-mocha px-4 text-sm font-semibold text-white transition hover:bg-coffee-hazelnut">
             + Novo agendamento
           </button>
-          <button
-            type="button"
-            onClick={handleBlockSchedule}
-            className="min-h-12 rounded-xl border border-coffee-hazelnut bg-white px-4 text-sm font-semibold text-coffee-darkRoast transition hover:bg-coffee-latte"
-          >
+          <button type="button" onClick={() => setIsBlockModalOpen(true)} className="min-h-12 rounded-xl border border-coffee-hazelnut bg-white px-4 text-sm font-semibold text-coffee-darkRoast transition hover:bg-coffee-latte">
             Bloquear horário
           </button>
         </div>
@@ -240,42 +257,25 @@ export function DailyScheduleSection({ selectedDate }: DailyScheduleSectionProps
       <div className="mt-4 rounded-2xl border border-coffee-cappuccino/70 bg-white/70 p-3 sm:p-4">
         <p className="text-xs font-semibold uppercase tracking-[0.18em] text-coffee-espresso">Adicionar horário personalizado</p>
         <div className="mt-2 flex flex-col gap-2 sm:flex-row">
-          <input
-            type="time"
-            value={newCustomTime}
-            onChange={(event) => setNewCustomTime(event.target.value)}
-            className="min-h-12 w-full rounded-xl border border-coffee-macchiato bg-white px-3 text-base font-medium text-coffee-darkRoast focus:border-coffee-mocha focus:outline-none focus:ring-2 focus:ring-coffee-cappuccino/60 sm:max-w-44 sm:text-sm"
-            aria-label="Selecionar horário personalizado"
-          />
-          <button
-            type="button"
-            onClick={handleAddCustomTime}
-            className="min-h-12 rounded-xl border border-coffee-hazelnut bg-coffee-latte px-4 text-sm font-semibold text-coffee-darkRoast transition hover:bg-coffee-cappuccino"
-          >
+          <input type="time" value={newCustomTime} onChange={(event) => setNewCustomTime(event.target.value)} className="min-h-12 w-full rounded-xl border border-coffee-macchiato bg-white px-3 text-base font-medium text-coffee-darkRoast focus:border-coffee-mocha focus:outline-none focus:ring-2 focus:ring-coffee-cappuccino/60 sm:max-w-44 sm:text-sm" aria-label="Selecionar horário personalizado" />
+          <button type="button" onClick={handleAddCustomTime} className="min-h-12 rounded-xl border border-coffee-hazelnut bg-coffee-latte px-4 text-sm font-semibold text-coffee-darkRoast transition hover:bg-coffee-cappuccino">
             Adicionar horário
           </button>
         </div>
       </div>
 
       <div className="mt-4">
-        <TimeGrid
-          slots={slots}
-          appointments={appointments}
-          blocks={blocks}
-          onClickAppointment={handleEditAppointment}
-          onClickEmptySlot={handleQuickCreate}
-        />
+        <TimeGrid slots={slots} appointments={appointments} blocks={blocks} onClickAppointment={() => undefined} onClickEmptySlot={(time) => { setPrefilledStartTime(time); setIsAppointmentModalOpen(true); }} />
       </div>
 
       <AppointmentFormModal
         open={isAppointmentModalOpen}
         onClose={() => setIsAppointmentModalOpen(false)}
-        clients={mockAppointmentClients}
-        services={mockAppointmentServices}
+        clients={clients.map((item) => ({ id: item.id, name: item.name, phone: item.phone }))}
+        services={services.map((item) => ({ id: item.id, name: item.name, durationMinutes: item.durationMinutes, price: item.price }))}
         existingConflicts={appointmentConflicts}
         initialDate={dateKey}
         initialStartTime={prefilledStartTime}
-        onQuickCreateClient={handleOpenClientRegister}
         onSubmit={handleCreateAppointment}
       />
 

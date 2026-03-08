@@ -6,6 +6,8 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Client } from '@/types';
 import { ClientFormModal, type ClientFormValues } from '@/components/clients/client-form-modal';
+import { createClient, deleteClient, listClients, updateClient } from '@/services/firestore/clients.firestore';
+import { useCachedCollection } from '@/hooks/use-cached-collection';
 
 const mockClients: Client[] = [
   {
@@ -19,24 +21,14 @@ const mockClients: Client[] = [
     birthDate: '1995-04-12',
     createdAt: new Date().toISOString(),
   },
-  {
-    id: 'client-2',
-    name: 'Fernanda Lima',
-    phone: '(11) 98888-1234',
-    email: 'fernanda@example.com',
-    createdAt: new Date().toISOString(),
-  },
-  {
-    id: 'client-3',
-    name: 'Juliana Santos',
-    phone: '(11) 97777-4567',
-    instagram: '@ju.santos',
-    createdAt: new Date().toISOString(),
-  },
 ];
 
 export function ClientsList() {
-  const [clients, setClients] = useState<Client[]>(mockClients);
+  const { data: clients, error, loading, updateCache } = useCachedCollection<Client>({
+    cacheKey: 'clients',
+    loader: listClients,
+    fallbackData: mockClients,
+  });
   const [search, setSearch] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingClientId, setEditingClientId] = useState<string | null>(null);
@@ -62,22 +54,12 @@ export function ClientsList() {
     [clients, editingClientId],
   );
 
-  const openNewClientModal = () => {
-    setEditingClientId(null);
-    setIsModalOpen(true);
-  };
-
-  const openEditClientModal = (client: Client) => {
-    setEditingClientId(client.id);
-    setIsModalOpen(true);
-  };
-
   const closeModal = () => {
     setIsModalOpen(false);
     setEditingClientId(null);
   };
 
-  const handleSubmitClient = (values: ClientFormValues) => {
+  const handleSubmitClient = async (values: ClientFormValues) => {
     const payload: Omit<Client, 'id' | 'createdAt'> = {
       name: values.name,
       phone: values.phone,
@@ -89,24 +71,24 @@ export function ClientsList() {
     };
 
     if (editingClientId) {
-      setClients((previous) =>
-        previous.map((client) => (client.id === editingClientId ? { ...client, ...payload } : client)),
-      );
-    } else {
-      const newClient: Client = {
-        id: `client-${Date.now()}`,
-        createdAt: new Date().toISOString(),
-        ...payload,
-      };
-
-      setClients((previous) => [newClient, ...previous]);
+      await updateClient(editingClientId, payload);
+      updateCache((previous) => previous.map((client) => (client.id === editingClientId ? { ...client, ...payload } : client)));
+      return;
     }
 
-    closeModal();
+    const newClient: Client = {
+      id: `client-${Date.now()}`,
+      createdAt: new Date().toISOString(),
+      ...payload,
+    };
+
+    await createClient(newClient);
+    updateCache((previous) => [newClient, ...previous]);
   };
 
-  const handleDeleteClient = (clientId: string) => {
-    setClients((previous) => previous.filter((client) => client.id !== clientId));
+  const handleDeleteClient = async (clientId: string) => {
+    await deleteClient(clientId);
+    updateCache((previous) => previous.filter((client) => client.id !== clientId));
   };
 
   return (
@@ -119,49 +101,23 @@ export function ClientsList() {
           aria-label="Buscar cliente"
           className="sm:max-w-sm"
         />
-        <Button onClick={openNewClientModal} className="w-full sm:w-auto">
+        <Button onClick={() => { setEditingClientId(null); setIsModalOpen(true); }} className="w-full bg-coffee-mocha text-coffee-cream hover:bg-coffee-espresso sm:w-auto">
           Novo Cliente
         </Button>
       </div>
 
-      <div className="hidden overflow-hidden rounded-xl border border-coffee-cappuccino lg:block">
-        <table className="w-full border-collapse text-left text-sm">
-          <thead className="bg-coffee-cappuccino/65 text-coffee-darkRoast">
-            <tr>
-              <th className="px-4 py-3 font-semibold">Nome</th>
-              <th className="px-4 py-3 font-semibold">Telefone</th>
-              <th className="px-4 py-3 font-semibold">Contato</th>
-              <th className="px-4 py-3 text-right font-semibold">Ações</th>
-            </tr>
-          </thead>
-          <tbody className="bg-white/70">
-            {filteredClients.map((client) => (
-              <tr key={client.id} className="border-t border-coffee-cappuccino/70 text-coffee-blackCoffee">
-                <td className="px-4 py-3 font-medium">{client.name}</td>
-                <td className="px-4 py-3">{client.phone}</td>
-                <td className="px-4 py-3">{client.email || client.instagram || '—'}</td>
-                <td className="px-4 py-3">
-                  <div className="flex justify-end gap-2">
-                    <Button variant="secondary" size="sm" onClick={() => openEditClientModal(client)}>
-                      Editar
-                    </Button>
-                    <Button variant="destructive" size="sm" onClick={() => handleDeleteClient(client.id)}>
-                      Excluir
-                    </Button>
-                  </div>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+      {error ? <p className="text-sm text-coffee-espresso">{error}</p> : null}
 
-      <ul className="space-y-3 lg:hidden">
+      {loading ? (
+        <div className="space-y-2">
+          <div className="h-12 animate-pulse rounded-xl bg-coffee-cappuccino/40" />
+          <div className="h-12 animate-pulse rounded-xl bg-coffee-cappuccino/30" />
+        </div>
+      ) : null}
+
+      <ul className="space-y-3">
         {filteredClients.map((client) => (
-          <li
-            key={client.id}
-            className="space-y-3 rounded-2xl border border-coffee-cappuccino bg-white/90 p-4 shadow-sm"
-          >
+          <li key={client.id} className="space-y-3 rounded-2xl border border-coffee-cappuccino bg-white/90 p-4 shadow-sm">
             <div>
               <p className="font-semibold text-coffee-darkRoast">{client.name}</p>
               <p className="text-sm text-coffee-espresso">{client.phone}</p>
@@ -169,14 +125,10 @@ export function ClientsList() {
             {client.email ? <p className="text-sm text-coffee-espresso">{client.email}</p> : null}
             {client.instagram ? <p className="text-sm text-coffee-espresso">{client.instagram}</p> : null}
             <div className="flex gap-2">
-              <Button variant="secondary" className="min-h-11 flex-1" onClick={() => openEditClientModal(client)}>
+              <Button variant="secondary" className="min-h-11 flex-1" onClick={() => { setEditingClientId(client.id); setIsModalOpen(true); }}>
                 Editar
               </Button>
-              <Button
-                variant="destructive"
-                className="min-h-11 flex-1"
-                onClick={() => handleDeleteClient(client.id)}
-              >
+              <Button variant="destructive" className="min-h-11 flex-1" onClick={() => void handleDeleteClient(client.id)}>
                 Excluir
               </Button>
             </div>
@@ -184,7 +136,7 @@ export function ClientsList() {
         ))}
       </ul>
 
-      {!filteredClients.length ? (
+      {!loading && !filteredClients.length ? (
         <p className="rounded-xl border border-dashed border-coffee-macchiato px-4 py-8 text-center text-sm text-coffee-espresso">
           Nenhuma cliente encontrada para esta busca.
         </p>

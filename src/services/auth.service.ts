@@ -12,6 +12,10 @@ function wait(delay: number) {
 }
 
 export async function loginWithEmail(email: string, password: string) {
+  if (!auth) {
+    throw new Error('Autenticação Firebase não configurada.');
+  }
+
   return signInWithEmailAndPassword(auth, email, password);
 }
 
@@ -35,5 +39,9 @@ export async function authenticateUser(email: string, password: string) {
 }
 
 export async function logout() {
+  if (!auth) {
+    return;
+  }
+
   return signOut(auth);
 }
