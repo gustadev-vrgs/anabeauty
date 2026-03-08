@@ -1,16 +1,44 @@
-import { ComponentPropsWithoutRef } from 'react';
+import { forwardRef } from 'react';
+import type { InputHTMLAttributes } from 'react';
 import { cn } from '@/utils/cn';
 
-interface InputProps extends ComponentPropsWithoutRef<'input'> {}
-
-export function Input({ className, ...props }: InputProps) {
-  return (
-    <input
-      className={cn(
-        'w-full rounded-xl border border-coffee-cappuccino bg-white px-3 py-2 text-sm text-coffee-blackCoffee placeholder:text-coffee-hazelnut/70 focus:outline-none focus:ring-2 focus:ring-coffee-caramel',
-        className,
-      )}
-      {...props}
-    />
-  );
+interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
+  label?: string;
+  error?: string;
+  helperText?: string;
 }
+
+export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
+  { className, label, error, helperText, id, ...props },
+  ref,
+) {
+  const inputId = id ?? props.name;
+
+  return (
+    <div className="space-y-1.5">
+      {label ? (
+        <label htmlFor={inputId} className="text-sm font-medium text-coffee-darkRoast">
+          {label}
+        </label>
+      ) : null}
+
+      <input
+        id={inputId}
+        ref={ref}
+        className={cn(
+          'h-11 w-full rounded-xl border border-border bg-coffee-latte px-3 text-sm text-foreground placeholder:text-muted-foreground transition-colors duration-150',
+          'focus:border-coffee-espresso focus:outline-none focus:ring-2 focus:ring-coffee-cappuccino/60',
+          error ? 'border-destructive focus:border-destructive focus:ring-destructive/30' : '',
+          className,
+        )}
+        {...props}
+      />
+
+      {error ? (
+        <p className="text-xs text-destructive">{error}</p>
+      ) : helperText ? (
+        <p className="text-xs text-muted-foreground">{helperText}</p>
+      ) : null}
+    </div>
+  );
+});
