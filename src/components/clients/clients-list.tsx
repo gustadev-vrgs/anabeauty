@@ -1,31 +1,11 @@
 'use client';
 
-import { FormEvent, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Modal } from '@/components/ui/modal';
 import { Client } from '@/types';
-
-type ClientFormData = {
-  name: string;
-  phone: string;
-  email: string;
-  instagram: string;
-  notes: string;
-  address: string;
-  birthDate: string;
-};
-
-const initialFormData: ClientFormData = {
-  name: '',
-  phone: '',
-  email: '',
-  instagram: '',
-  notes: '',
-  address: '',
-  birthDate: '',
-};
+import { ClientFormModal, type ClientFormValues } from '@/components/clients/client-form-modal';
 
 const mockClients: Client[] = [
   {
@@ -60,8 +40,6 @@ export function ClientsList() {
   const [search, setSearch] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingClientId, setEditingClientId] = useState<string | null>(null);
-  const [formData, setFormData] = useState<ClientFormData>(initialFormData);
-  const [formError, setFormError] = useState<string | null>(null);
 
   const filteredClients = useMemo(() => {
     const query = search.trim().toLowerCase();
@@ -79,57 +57,40 @@ export function ClientsList() {
     });
   }, [clients, search]);
 
+  const editingClient = useMemo(
+    () => clients.find((client) => client.id === editingClientId) ?? null,
+    [clients, editingClientId],
+  );
+
   const openNewClientModal = () => {
     setEditingClientId(null);
-    setFormData(initialFormData);
-    setFormError(null);
     setIsModalOpen(true);
   };
 
   const openEditClientModal = (client: Client) => {
     setEditingClientId(client.id);
-    setFormData({
-      name: client.name,
-      phone: client.phone,
-      email: client.email ?? '',
-      instagram: client.instagram ?? '',
-      notes: client.notes ?? '',
-      address: client.address ?? '',
-      birthDate: client.birthDate ?? '',
-    });
-    setFormError(null);
     setIsModalOpen(true);
   };
 
   const closeModal = () => {
     setIsModalOpen(false);
     setEditingClientId(null);
-    setFormError(null);
   };
 
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-
-    if (!formData.name.trim() || !formData.phone.trim()) {
-      setFormError('Nome e telefone são obrigatórios.');
-      return;
-    }
-
+  const handleSubmitClient = (values: ClientFormValues) => {
     const payload: Omit<Client, 'id' | 'createdAt'> = {
-      name: formData.name.trim(),
-      phone: formData.phone.trim(),
-      email: formData.email.trim() || undefined,
-      instagram: formData.instagram.trim() || undefined,
-      notes: formData.notes.trim() || undefined,
-      address: formData.address.trim() || undefined,
-      birthDate: formData.birthDate || undefined,
+      name: values.name,
+      phone: values.phone,
+      email: values.email || undefined,
+      instagram: values.instagram || undefined,
+      notes: values.notes || undefined,
+      address: values.address || undefined,
+      birthDate: values.birthDate || undefined,
     };
 
     if (editingClientId) {
       setClients((previous) =>
-        previous.map((client) =>
-          client.id === editingClientId ? { ...client, ...payload } : client,
-        ),
+        previous.map((client) => (client.id === editingClientId ? { ...client, ...payload } : client)),
       );
     } else {
       const newClient: Client = {
@@ -230,72 +191,25 @@ export function ClientsList() {
         </p>
       ) : null}
 
-      <Modal
+      <ClientFormModal
         open={isModalOpen}
+        mode={editingClient ? 'edit' : 'create'}
+        initialValues={
+          editingClient
+            ? {
+                name: editingClient.name,
+                phone: editingClient.phone,
+                email: editingClient.email ?? '',
+                instagram: editingClient.instagram ?? '',
+                notes: editingClient.notes ?? '',
+                address: editingClient.address ?? '',
+                birthDate: editingClient.birthDate ?? '',
+              }
+            : undefined
+        }
         onClose={closeModal}
-        title={editingClientId ? 'Editar cliente' : 'Novo cliente'}
-        description="Preencha os dados da cliente para salvar no cadastro."
-      >
-        <form className="space-y-3" onSubmit={handleSubmit}>
-          <Input
-            label="Nome *"
-            value={formData.name}
-            onChange={(event) => setFormData((prev) => ({ ...prev, name: event.target.value }))}
-            placeholder="Nome completo"
-            required
-          />
-          <Input
-            label="Telefone *"
-            value={formData.phone}
-            onChange={(event) => setFormData((prev) => ({ ...prev, phone: event.target.value }))}
-            placeholder="(11) 99999-9999"
-            required
-          />
-          <Input
-            label="Email"
-            type="email"
-            value={formData.email}
-            onChange={(event) => setFormData((prev) => ({ ...prev, email: event.target.value }))}
-            placeholder="cliente@email.com"
-          />
-          <Input
-            label="Instagram"
-            value={formData.instagram}
-            onChange={(event) => setFormData((prev) => ({ ...prev, instagram: event.target.value }))}
-            placeholder="@usuario"
-          />
-          <Input
-            label="Data de nascimento"
-            type="date"
-            value={formData.birthDate}
-            onChange={(event) => setFormData((prev) => ({ ...prev, birthDate: event.target.value }))}
-          />
-          <Input
-            label="Endereço"
-            value={formData.address}
-            onChange={(event) => setFormData((prev) => ({ ...prev, address: event.target.value }))}
-            placeholder="Rua, número, cidade"
-          />
-          <div className="space-y-1.5">
-            <label className="text-sm font-medium text-coffee-darkRoast" htmlFor="observacoes-cliente">
-              Observações
-            </label>
-            <textarea
-              id="observacoes-cliente"
-              className="min-h-20 w-full rounded-xl border border-border bg-coffee-latte px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:border-coffee-espresso focus:outline-none focus:ring-2 focus:ring-coffee-cappuccino/60"
-              value={formData.notes}
-              onChange={(event) => setFormData((prev) => ({ ...prev, notes: event.target.value }))}
-              placeholder="Preferências, restrições ou observações importantes"
-            />
-          </div>
-
-          {formError ? <p className="text-sm text-destructive">{formError}</p> : null}
-
-          <div className="flex justify-end">
-            <Button type="submit">{editingClientId ? 'Salvar alterações' : 'Cadastrar cliente'}</Button>
-          </div>
-        </form>
-      </Modal>
+        onSubmit={handleSubmitClient}
+      />
     </Card>
   );
 }
