@@ -4,7 +4,10 @@ import { PageTitle } from '@/components/ui/page-title';
 export default function ClientesPage() {
   return (
     <>
-      <PageTitle title="Clientes" subtitle="Base inicial para cadastro e gestão de clientes." />
+      <PageTitle
+        title="Clientes"
+        subtitle="Cadastre, busque e gerencie sua base de clientes em poucos cliques."
+      />
       <ClientsList />
     </>
   );
