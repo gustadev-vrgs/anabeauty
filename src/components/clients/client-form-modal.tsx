@@ -1,0 +1,291 @@
+'use client';
+
+import { FormEvent, useEffect, useMemo, useState } from 'react';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { cn } from '@/utils/cn';
+
+export type ClientFormValues = {
+  name: string;
+  phone: string;
+  email: string;
+  instagram: string;
+  notes: string;
+  address: string;
+  birthDate: string;
+};
+
+export type ClientFormModalMode = 'create' | 'edit';
+
+type ClientFormModalProps = {
+  open: boolean;
+  mode: ClientFormModalMode;
+  initialValues?: Partial<ClientFormValues>;
+  onClose: () => void;
+  onSubmit: (values: ClientFormValues) => void;
+};
+
+const initialFormValues: ClientFormValues = {
+  name: '',
+  phone: '',
+  email: '',
+  instagram: '',
+  notes: '',
+  address: '',
+  birthDate: '',
+};
+
+function sanitizeValues(initialValues?: Partial<ClientFormValues>): ClientFormValues {
+  return {
+    name: initialValues?.name ?? '',
+    phone: initialValues?.phone ?? '',
+    email: initialValues?.email ?? '',
+    instagram: initialValues?.instagram ?? '',
+    notes: initialValues?.notes ?? '',
+    address: initialValues?.address ?? '',
+    birthDate: initialValues?.birthDate ?? '',
+  };
+}
+
+function validateEmail(email: string) {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+}
+
+export function ClientFormModal({ open, mode, initialValues, onClose, onSubmit }: ClientFormModalProps) {
+  const [values, setValues] = useState<ClientFormValues>(initialFormValues);
+  const [errors, setErrors] = useState<Partial<Record<keyof ClientFormValues, string>>>({});
+  const [showContactExtras, setShowContactExtras] = useState(true);
+  const [showProfileExtras, setShowProfileExtras] = useState(false);
+
+  const title = mode === 'edit' ? 'Editar cliente' : 'Novo cliente';
+
+  useEffect(() => {
+    if (!open) {
+      return;
+    }
+
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        onClose();
+      }
+    };
+
+    window.addEventListener('keydown', onKeyDown);
+
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      window.removeEventListener('keydown', onKeyDown);
+    };
+  }, [open, onClose]);
+
+  useEffect(() => {
+    if (!open) {
+      return;
+    }
+
+    setValues(sanitizeValues(initialValues));
+    setErrors({});
+    setShowContactExtras(true);
+    setShowProfileExtras(mode === 'edit');
+  }, [open, initialValues, mode]);
+
+  const hasAnyOptionalValue = useMemo(
+    () => Boolean(values.email || values.instagram || values.notes || values.address || values.birthDate),
+    [values],
+  );
+
+  if (!open) {
+    return null;
+  }
+
+  function handleSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+
+    const nextErrors: Partial<Record<keyof ClientFormValues, string>> = {};
+    const normalizedPhone = values.phone.replace(/\D/g, '');
+
+    if (!values.name.trim()) {
+      nextErrors.name = 'Informe o nome da cliente.';
+    }
+
+    if (!values.phone.trim()) {
+      nextErrors.phone = 'Informe o telefone da cliente.';
+    } else if (normalizedPhone.length < 10) {
+      nextErrors.phone = 'Informe um telefone válido com DDD.';
+    }
+
+    if (values.email.trim() && !validateEmail(values.email.trim())) {
+      nextErrors.email = 'Informe um email válido.';
+    }
+
+    if (Object.keys(nextErrors).length) {
+      setErrors(nextErrors);
+      return;
+    }
+
+    setErrors({});
+
+    onSubmit({
+      name: values.name.trim(),
+      phone: values.phone.trim(),
+      email: values.email.trim(),
+      instagram: values.instagram.trim(),
+      notes: values.notes.trim(),
+      address: values.address.trim(),
+      birthDate: values.birthDate,
+    });
+  }
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-end justify-center bg-coffee-blackCoffee/40 px-3 py-2 backdrop-blur-sm sm:items-center sm:px-4 sm:py-8">
+      <button type="button" aria-label="Fechar modal" className="absolute inset-0" onClick={onClose} />
+
+      <section
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="client-form-modal-title"
+        className="relative z-10 max-h-[94vh] w-full max-w-2xl overflow-y-auto rounded-3xl border border-coffee-cappuccino bg-coffee-cream p-4 pb-[max(1rem,env(safe-area-inset-bottom))] shadow-elevated sm:max-h-[88vh] sm:p-6"
+      >
+        <header className="mb-5 space-y-1">
+          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-coffee-espresso">Cadastro rápido</p>
+          <h2 id="client-form-modal-title" className="text-xl font-semibold text-coffee-darkRoast sm:text-2xl">
+            {title}
+          </h2>
+          <p className="text-sm text-coffee-espresso">
+            Comece com o essencial e expanda os campos extras apenas quando necessário.
+          </p>
+        </header>
+
+        <form className="space-y-4" onSubmit={handleSubmit} noValidate>
+          <div className="rounded-2xl border border-coffee-cappuccino/80 bg-white/80 p-4">
+            <p className="mb-3 text-xs font-semibold uppercase tracking-[0.16em] text-coffee-espresso">Obrigatório</p>
+            <div className="grid gap-3 sm:grid-cols-2">
+              <Input
+                label="Nome *"
+                value={values.name}
+                onChange={(event) => setValues((previous) => ({ ...previous, name: event.target.value }))}
+                error={errors.name}
+                placeholder="Nome completo"
+                autoComplete="name"
+                required
+              />
+              <Input
+                label="Telefone *"
+                value={values.phone}
+                onChange={(event) => setValues((previous) => ({ ...previous, phone: event.target.value }))}
+                error={errors.phone}
+                placeholder="(11) 99999-9999"
+                autoComplete="tel"
+                inputMode="tel"
+                required
+              />
+            </div>
+          </div>
+
+          <div className="space-y-3">
+            <button
+              type="button"
+              onClick={() => setShowContactExtras((previous) => !previous)}
+              className="flex w-full items-center justify-between rounded-2xl border border-coffee-cappuccino bg-white/80 px-4 py-3 text-left"
+              aria-expanded={showContactExtras}
+            >
+              <span>
+                <p className="text-sm font-semibold text-coffee-darkRoast">Contato adicional</p>
+                <p className="text-xs text-coffee-espresso">Email e Instagram</p>
+              </span>
+              <span className="text-sm font-semibold text-coffee-mocha">{showContactExtras ? 'Recolher' : 'Expandir'}</span>
+            </button>
+
+            {showContactExtras ? (
+              <div className="grid gap-3 rounded-2xl border border-coffee-cappuccino/80 bg-white/70 p-4 sm:grid-cols-2">
+                <Input
+                  label="Email"
+                  type="email"
+                  value={values.email}
+                  onChange={(event) => setValues((previous) => ({ ...previous, email: event.target.value }))}
+                  error={errors.email}
+                  placeholder="cliente@email.com"
+                  autoComplete="email"
+                  inputMode="email"
+                />
+                <Input
+                  label="Instagram"
+                  value={values.instagram}
+                  onChange={(event) => setValues((previous) => ({ ...previous, instagram: event.target.value }))}
+                  placeholder="@usuario"
+                  autoCapitalize="none"
+                />
+              </div>
+            ) : null}
+          </div>
+
+          <div className="space-y-3">
+            <button
+              type="button"
+              onClick={() => setShowProfileExtras((previous) => !previous)}
+              className="flex w-full items-center justify-between rounded-2xl border border-coffee-cappuccino bg-white/80 px-4 py-3 text-left"
+              aria-expanded={showProfileExtras}
+            >
+              <span>
+                <p className="text-sm font-semibold text-coffee-darkRoast">Perfil e observações</p>
+                <p className="text-xs text-coffee-espresso">Data de nascimento, endereço e observações</p>
+              </span>
+              <span className="text-sm font-semibold text-coffee-mocha">{showProfileExtras ? 'Recolher' : 'Expandir'}</span>
+            </button>
+
+            {showProfileExtras ? (
+              <div className="space-y-3 rounded-2xl border border-coffee-cappuccino/80 bg-white/70 p-4">
+                <div className="grid gap-3 sm:grid-cols-2">
+                  <Input
+                    label="Data de nascimento"
+                    type="date"
+                    value={values.birthDate}
+                    onChange={(event) => setValues((previous) => ({ ...previous, birthDate: event.target.value }))}
+                  />
+                  <Input
+                    label="Endereço"
+                    value={values.address}
+                    onChange={(event) => setValues((previous) => ({ ...previous, address: event.target.value }))}
+                    placeholder="Rua, número, cidade"
+                    autoComplete="street-address"
+                  />
+                </div>
+                <div className="space-y-1.5">
+                  <label className="text-sm font-medium text-coffee-darkRoast" htmlFor="observacoes-cliente">
+                    Observações
+                  </label>
+                  <textarea
+                    id="observacoes-cliente"
+                    className={cn(
+                      'min-h-24 w-full rounded-xl border border-border bg-coffee-latte px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground transition-colors',
+                      'focus:border-coffee-espresso focus:outline-none focus:ring-2 focus:ring-coffee-cappuccino/60',
+                    )}
+                    value={values.notes}
+                    onChange={(event) => setValues((previous) => ({ ...previous, notes: event.target.value }))}
+                    placeholder="Preferências, restrições ou observações importantes"
+                  />
+                </div>
+              </div>
+            ) : null}
+          </div>
+
+          {!hasAnyOptionalValue ? (
+            <p className="text-xs text-coffee-espresso">Dica: você pode salvar só com nome e telefone.</p>
+          ) : null}
+
+          <div className="flex flex-col-reverse gap-2 border-t border-coffee-cappuccino/70 pt-4 sm:flex-row sm:justify-end">
+            <Button type="button" variant="secondary" onClick={onClose} className="w-full sm:w-auto">
+              Cancelar
+            </Button>
+            <Button type="submit" className="w-full bg-coffee-mocha text-coffee-cream hover:bg-coffee-espresso sm:w-auto">
+              Salvar Cliente
+            </Button>
+          </div>
+        </form>
+      </section>
+    </div>
+  );
+}
