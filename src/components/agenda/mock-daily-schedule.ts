@@ -13,6 +13,8 @@ export type ScheduleBlock = {
   startTime: string;
   endTime: string;
   reason?: string;
+  blockType?: 'horario_unico' | 'intervalo' | 'dia_inteiro';
+  notes?: string;
 };
 
 export const mockDailyAppointments: ScheduleAppointment[] = [
