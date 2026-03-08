@@ -6,13 +6,13 @@ import { Input } from '@/components/ui/input';
 import { cn } from '@/utils/cn';
 
 export type ServiceFormValues = {
-  name: string;
-  price: string;
-  durationMinutes: string;
-  category: string;
-  description: string;
+  nome: string;
+  valor: string;
+  duracaoMinutos: string;
+  categoria: string;
+  descricao: string;
   availableForBooking: boolean;
-  imageUrl: string;
+  imageUrl?: string;
 };
 
 export type ServiceFormModalMode = 'create' | 'edit';
@@ -26,22 +26,22 @@ type ServiceFormModalProps = {
 };
 
 const initialFormValues: ServiceFormValues = {
-  name: '',
-  price: '',
-  durationMinutes: '',
-  category: '',
-  description: '',
+  nome: '',
+  valor: '',
+  duracaoMinutos: '',
+  categoria: '',
+  descricao: '',
   availableForBooking: true,
   imageUrl: '',
 };
 
 function sanitizeValues(initialValues?: Partial<ServiceFormValues>): ServiceFormValues {
   return {
-    name: initialValues?.name ?? '',
-    price: initialValues?.price ?? '',
-    durationMinutes: initialValues?.durationMinutes ?? '',
-    category: initialValues?.category ?? '',
-    description: initialValues?.description ?? '',
+    nome: initialValues?.nome ?? '',
+    valor: initialValues?.valor ?? '',
+    duracaoMinutos: initialValues?.duracaoMinutos ?? '',
+    categoria: initialValues?.categoria ?? '',
+    descricao: initialValues?.descricao ?? '',
     availableForBooking: initialValues?.availableForBooking ?? true,
     imageUrl: initialValues?.imageUrl ?? '',
   };
@@ -95,36 +95,36 @@ export function ServiceFormModal({ open, mode, initialValues, onClose, onSubmit 
     return null;
   }
 
-  const title = mode === 'edit' ? 'Editar serviço' : 'Novo serviço';
+  const title = mode === 'edit' ? 'Editar serviço/procedimento' : 'Novo serviço/procedimento';
 
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
     const nextErrors: Partial<Record<keyof ServiceFormValues, string>> = {};
-    const parsedPrice = Number(values.price.replace(',', '.'));
-    const parsedDuration = Number(values.durationMinutes);
+    const parsedValor = Number(values.valor.replace(',', '.'));
+    const parsedDuracao = Number(values.duracaoMinutos);
 
-    if (!values.name.trim()) {
-      nextErrors.name = 'Informe o nome do serviço.';
+    if (!values.nome.trim()) {
+      nextErrors.nome = 'Informe o nome do serviço.';
     }
 
-    if (!values.category.trim()) {
-      nextErrors.category = 'Informe a categoria.';
+    if (!values.categoria.trim()) {
+      nextErrors.categoria = 'Informe a categoria.';
     }
 
-    if (!values.price.trim()) {
-      nextErrors.price = 'Informe o valor.';
-    } else if (!Number.isFinite(parsedPrice) || parsedPrice <= 0) {
-      nextErrors.price = 'Informe um valor válido.';
+    if (!values.valor.trim()) {
+      nextErrors.valor = 'Informe o valor.';
+    } else if (!Number.isFinite(parsedValor) || parsedValor <= 0) {
+      nextErrors.valor = 'Informe um valor válido maior que zero.';
     }
 
-    if (!values.durationMinutes.trim()) {
-      nextErrors.durationMinutes = 'Informe a duração em minutos.';
-    } else if (!Number.isFinite(parsedDuration) || parsedDuration <= 0) {
-      nextErrors.durationMinutes = 'Informe uma duração válida.';
+    if (!values.duracaoMinutos.trim()) {
+      nextErrors.duracaoMinutos = 'Informe a duração em minutos.';
+    } else if (!Number.isFinite(parsedDuracao) || parsedDuracao <= 0) {
+      nextErrors.duracaoMinutos = 'Informe uma duração válida.';
     }
 
-    if (values.imageUrl.trim() && !isValidUrl(values.imageUrl.trim())) {
+    if (values.imageUrl?.trim() && !isValidUrl(values.imageUrl.trim())) {
       nextErrors.imageUrl = 'Informe uma URL válida iniciando com http:// ou https://.';
     }
 
@@ -136,117 +136,125 @@ export function ServiceFormModal({ open, mode, initialValues, onClose, onSubmit 
     setErrors({});
 
     onSubmit({
-      name: values.name.trim(),
-      category: values.category.trim(),
-      price: parsedPrice.toFixed(2),
-      durationMinutes: String(parsedDuration),
-      description: values.description.trim(),
+      nome: values.nome.trim(),
+      categoria: values.categoria.trim(),
+      valor: parsedValor.toFixed(2),
+      duracaoMinutos: String(parsedDuracao),
+      descricao: values.descricao.trim(),
       availableForBooking: values.availableForBooking,
-      imageUrl: values.imageUrl.trim(),
+      imageUrl: values.imageUrl?.trim() ?? '',
     });
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-end justify-center bg-coffee-blackCoffee/40 px-3 py-2 backdrop-blur-sm sm:items-center sm:px-4 sm:py-8">
+    <div className="fixed inset-0 z-50 flex items-end justify-center bg-coffee-blackCoffee/45 p-2 backdrop-blur-sm sm:items-center sm:p-6">
       <button type="button" aria-label="Fechar modal" className="absolute inset-0" onClick={onClose} />
 
       <section
         role="dialog"
         aria-modal="true"
         aria-labelledby="service-form-modal-title"
-        className="relative z-10 max-h-[94vh] w-full max-w-2xl overflow-y-auto rounded-3xl border border-coffee-cappuccino bg-coffee-cream p-4 pb-[max(1rem,env(safe-area-inset-bottom))] shadow-elevated sm:max-h-[88vh] sm:p-6"
+        className="relative z-10 flex max-h-[96dvh] w-full max-w-3xl flex-col overflow-hidden rounded-3xl border border-coffee-cappuccino bg-coffee-cream shadow-elevated"
       >
-        <header className="mb-5 space-y-1">
-          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-coffee-espresso">Catálogo de procedimentos</p>
-          <h2 id="service-form-modal-title" className="text-xl font-semibold text-coffee-darkRoast sm:text-2xl">
+        <header className="border-b border-coffee-cappuccino/75 px-4 pb-4 pt-5 sm:px-7 sm:pt-6">
+          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-coffee-espresso">Cadastro de procedimentos</p>
+          <h2 id="service-form-modal-title" className="mt-1 text-xl font-semibold text-coffee-darkRoast sm:text-2xl">
             {title}
           </h2>
+          <p className="mt-2 text-sm text-coffee-espresso/90">Preencha os dados para manter seu catálogo elegante e pronto para agendamentos.</p>
         </header>
 
-        <form className="space-y-4" onSubmit={handleSubmit} noValidate>
-          <div className="grid gap-3 rounded-2xl border border-coffee-cappuccino/80 bg-white/80 p-4 sm:grid-cols-2">
-            <Input
-              label="Nome *"
-              value={values.name}
-              onChange={(event) => setValues((previous) => ({ ...previous, name: event.target.value }))}
-              error={errors.name}
-              placeholder="Ex: Limpeza de pele"
-              required
-            />
-            <Input
-              label="Categoria *"
-              value={values.category}
-              onChange={(event) => setValues((previous) => ({ ...previous, category: event.target.value }))}
-              error={errors.category}
-              placeholder="Ex: Estética facial"
-              required
-            />
-            <Input
-              label="Valor (R$) *"
-              type="number"
-              min="0"
-              step="0.01"
-              value={values.price}
-              onChange={(event) => setValues((previous) => ({ ...previous, price: event.target.value }))}
-              error={errors.price}
-              placeholder="0,00"
-              required
-            />
-            <Input
-              label="Duração (minutos) *"
-              type="number"
-              min="1"
-              step="1"
-              value={values.durationMinutes}
-              onChange={(event) => setValues((previous) => ({ ...previous, durationMinutes: event.target.value }))}
-              error={errors.durationMinutes}
-              placeholder="60"
-              required
-            />
-          </div>
-
-          <div className="space-y-1.5 rounded-2xl border border-coffee-cappuccino/80 bg-white/80 p-4">
-            <label className="text-sm font-medium text-coffee-darkRoast" htmlFor="service-description">
-              Descrição
-            </label>
-            <textarea
-              id="service-description"
-              className={cn(
-                'min-h-24 w-full rounded-xl border border-border bg-coffee-latte px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground transition-colors',
-                'focus:border-coffee-espresso focus:outline-none focus:ring-2 focus:ring-coffee-cappuccino/60',
-              )}
-              value={values.description}
-              onChange={(event) => setValues((previous) => ({ ...previous, description: event.target.value }))}
-              placeholder="Descreva os detalhes do procedimento."
-            />
-          </div>
-
-          <div className="grid gap-3 rounded-2xl border border-coffee-cappuccino/80 bg-white/80 p-4 sm:grid-cols-[1fr_auto] sm:items-end">
-            <Input
-              label="URL da imagem (opcional)"
-              type="url"
-              value={values.imageUrl}
-              onChange={(event) => setValues((previous) => ({ ...previous, imageUrl: event.target.value }))}
-              error={errors.imageUrl}
-              placeholder="https://..."
-            />
-            <label className="flex h-11 items-center gap-2 rounded-xl border border-coffee-cappuccino bg-coffee-latte px-3 text-sm text-coffee-darkRoast">
-              <input
-                type="checkbox"
-                checked={values.availableForBooking}
-                onChange={(event) =>
-                  setValues((previous) => ({
-                    ...previous,
-                    availableForBooking: event.target.checked,
-                  }))
-                }
-                className="size-4 rounded border-coffee-cappuccino accent-coffee-mocha"
+        <form className="flex-1 overflow-y-auto px-4 pb-6 pt-4 sm:px-7" onSubmit={handleSubmit} noValidate>
+          <div className="space-y-4">
+            <div className="grid gap-3 rounded-2xl border border-coffee-cappuccino/80 bg-white/80 p-4 sm:grid-cols-2 sm:gap-4">
+              <Input
+                label="Nome *"
+                value={values.nome}
+                onChange={(event) => setValues((previous) => ({ ...previous, nome: event.target.value }))}
+                error={errors.nome}
+                placeholder="Ex: Limpeza de pele premium"
+                autoComplete="off"
+                required
               />
-              Disponível para agendamento
-            </label>
+              <Input
+                label="Categoria *"
+                value={values.categoria}
+                onChange={(event) => setValues((previous) => ({ ...previous, categoria: event.target.value }))}
+                error={errors.categoria}
+                placeholder="Ex: Estética facial"
+                autoComplete="off"
+                required
+              />
+              <Input
+                label="Valor (R$) *"
+                type="number"
+                inputMode="decimal"
+                min="0"
+                step="0.01"
+                value={values.valor}
+                onChange={(event) => setValues((previous) => ({ ...previous, valor: event.target.value }))}
+                error={errors.valor}
+                placeholder="0,00"
+                required
+              />
+              <Input
+                label="Duração (minutos) *"
+                type="number"
+                inputMode="numeric"
+                min="1"
+                step="1"
+                value={values.duracaoMinutos}
+                onChange={(event) => setValues((previous) => ({ ...previous, duracaoMinutos: event.target.value }))}
+                error={errors.duracaoMinutos}
+                placeholder="60"
+                required
+              />
+            </div>
+
+            <div className="space-y-1.5 rounded-2xl border border-coffee-cappuccino/80 bg-white/80 p-4">
+              <label className="text-sm font-medium text-coffee-darkRoast" htmlFor="service-descricao">
+                Descrição
+              </label>
+              <textarea
+                id="service-descricao"
+                className={cn(
+                  'min-h-24 w-full rounded-xl border border-border bg-coffee-latte px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground transition-colors',
+                  'focus:border-coffee-espresso focus:outline-none focus:ring-2 focus:ring-coffee-cappuccino/60',
+                )}
+                value={values.descricao}
+                onChange={(event) => setValues((previous) => ({ ...previous, descricao: event.target.value }))}
+                placeholder="Descreva os benefícios e etapas do procedimento."
+              />
+            </div>
+
+            <div className="grid gap-3 rounded-2xl border border-coffee-cappuccino/80 bg-white/80 p-4 sm:grid-cols-[1fr_auto] sm:items-end">
+              <Input
+                label="Imagem (opcional)"
+                type="url"
+                value={values.imageUrl}
+                onChange={(event) => setValues((previous) => ({ ...previous, imageUrl: event.target.value }))}
+                error={errors.imageUrl}
+                placeholder="https://..."
+                helperText="Campo pronto para integrar com upload no Firebase Storage."
+              />
+              <label className="flex h-11 items-center gap-2 rounded-xl border border-coffee-cappuccino bg-coffee-latte px-3 text-sm font-medium text-coffee-darkRoast">
+                <input
+                  type="checkbox"
+                  checked={values.availableForBooking}
+                  onChange={(event) =>
+                    setValues((previous) => ({
+                      ...previous,
+                      availableForBooking: event.target.checked,
+                    }))
+                  }
+                  className="size-4 rounded border-coffee-cappuccino accent-coffee-mocha"
+                />
+                Disponível para agendamento
+              </label>
+            </div>
           </div>
 
-          <div className="flex flex-col-reverse gap-2 border-t border-coffee-cappuccino/70 pt-4 sm:flex-row sm:justify-end">
+          <div className="sticky bottom-0 mt-5 flex flex-col-reverse gap-2 border-t border-coffee-cappuccino/70 bg-coffee-cream/95 pb-[max(0.25rem,env(safe-area-inset-bottom))] pt-4 backdrop-blur sm:flex-row sm:justify-end">
             <Button type="button" variant="secondary" onClick={onClose} className="w-full sm:w-auto">
               Cancelar
             </Button>
