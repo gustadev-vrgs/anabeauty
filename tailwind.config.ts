@@ -41,8 +41,8 @@ const config: Config = {
         },
       },
       boxShadow: {
-        card: '0 10px 30px rgba(76, 43, 28, 0.12)',
-        elevated: '0 16px 40px rgba(42, 26, 19, 0.18)',
+        card: '0 10px 28px rgba(42, 26, 19, 0.08)',
+        elevated: '0 14px 34px rgba(42, 26, 19, 0.14)',
       },
       borderRadius: {
         xl: '1rem',

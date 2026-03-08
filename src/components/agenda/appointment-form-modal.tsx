@@ -187,7 +187,7 @@ export function AppointmentFormModal({
     <div className="fixed inset-0 z-50 flex items-end justify-center bg-coffee-blackCoffee/40 px-0 py-0 backdrop-blur-sm sm:px-4 sm:py-8 sm:items-center">
       <button type="button" aria-label="Fechar modal" className="absolute inset-0" onClick={onClose} />
 
-      <section className="relative z-10 max-h-[100dvh] w-full max-w-2xl overflow-y-auto overscroll-contain rounded-t-3xl border border-coffee-cappuccino bg-coffee-cream p-4 pb-[max(1rem,env(safe-area-inset-bottom))] pt-[max(1rem,env(safe-area-inset-top))] shadow-elevated sm:max-h-[88vh] sm:rounded-3xl sm:p-6">
+      <section className="relative z-10 max-h-[100dvh] w-full max-w-2xl overflow-y-auto overscroll-contain rounded-t-3xl border border-coffee-cappuccino bg-white p-4 pb-[max(1rem,env(safe-area-inset-bottom))] pt-[max(1rem,env(safe-area-inset-top))] shadow-elevated sm:max-h-[88vh] sm:rounded-3xl sm:p-6">
         <header className="mb-5 space-y-1">
           <p className="text-xs font-semibold uppercase tracking-[0.2em] text-coffee-espresso">Agenda</p>
           <h2 className="text-xl font-semibold text-coffee-darkRoast sm:text-2xl">Novo agendamento</h2>
@@ -202,7 +202,7 @@ export function AppointmentFormModal({
               type="date"
               value={formValues.date}
               onChange={(event) => setFormValues((previous) => ({ ...previous, date: event.target.value }))}
-              className="h-12 w-full rounded-xl border border-coffee-macchiato bg-white px-3 text-base text-coffee-darkRoast outline-none transition focus:border-coffee-mocha focus:ring-2 focus:ring-coffee-cappuccino/70"
+              className="h-12 w-full rounded-xl border border-coffee-cappuccino bg-white px-3 text-base text-coffee-darkRoast outline-none transition focus:border-coffee-mocha focus:ring-2 focus:ring-coffee-latte"
             />
           </label>
 
@@ -212,7 +212,7 @@ export function AppointmentFormModal({
               type="time"
               value={formValues.horaInicio}
               onChange={(event) => setFormValues((previous) => ({ ...previous, horaInicio: event.target.value }))}
-              className="h-12 w-full rounded-xl border border-coffee-macchiato bg-white px-3 text-base text-coffee-darkRoast outline-none transition focus:border-coffee-mocha focus:ring-2 focus:ring-coffee-cappuccino/70"
+              className="h-12 w-full rounded-xl border border-coffee-cappuccino bg-white px-3 text-base text-coffee-darkRoast outline-none transition focus:border-coffee-mocha focus:ring-2 focus:ring-coffee-latte"
             />
           </label>
 
@@ -221,7 +221,7 @@ export function AppointmentFormModal({
             <select
               value={formValues.servicoId}
               onChange={(event) => handleServiceChange(event.target.value)}
-              className="h-12 w-full rounded-xl border border-coffee-macchiato bg-white px-3 text-base text-coffee-darkRoast outline-none transition focus:border-coffee-mocha focus:ring-2 focus:ring-coffee-cappuccino/70"
+              className="h-12 w-full rounded-xl border border-coffee-cappuccino bg-white px-3 text-base text-coffee-darkRoast outline-none transition focus:border-coffee-mocha focus:ring-2 focus:ring-coffee-latte"
             >
               <option value="">Selecione um serviço</option>
               {services.map((service) => (
@@ -247,7 +247,7 @@ export function AppointmentFormModal({
             <select
               value={formValues.clienteId}
               onChange={(event) => setFormValues((previous) => ({ ...previous, clienteId: event.target.value }))}
-              className="h-12 w-full rounded-xl border border-coffee-macchiato bg-white px-3 text-base text-coffee-darkRoast outline-none transition focus:border-coffee-mocha focus:ring-2 focus:ring-coffee-cappuccino/70"
+              className="h-12 w-full rounded-xl border border-coffee-cappuccino bg-white px-3 text-base text-coffee-darkRoast outline-none transition focus:border-coffee-mocha focus:ring-2 focus:ring-coffee-latte"
             >
               <option value="">Selecione uma cliente</option>
               {clients.map((client) => (
@@ -268,7 +268,7 @@ export function AppointmentFormModal({
               onChange={(event) =>
                 setFormValues((previous) => ({ ...previous, duracao: Number(event.target.value) || 0 }))
               }
-              className="h-12 w-full rounded-xl border border-coffee-macchiato bg-white px-3 text-base text-coffee-darkRoast outline-none transition focus:border-coffee-mocha focus:ring-2 focus:ring-coffee-cappuccino/70"
+              className="h-12 w-full rounded-xl border border-coffee-cappuccino bg-white px-3 text-base text-coffee-darkRoast outline-none transition focus:border-coffee-mocha focus:ring-2 focus:ring-coffee-latte"
             />
           </label>
 
@@ -280,7 +280,7 @@ export function AppointmentFormModal({
               step={0.01}
               value={formValues.valor}
               onChange={(event) => setFormValues((previous) => ({ ...previous, valor: Number(event.target.value) || 0 }))}
-              className="h-12 w-full rounded-xl border border-coffee-macchiato bg-white px-3 text-base text-coffee-darkRoast outline-none transition focus:border-coffee-mocha focus:ring-2 focus:ring-coffee-cappuccino/70"
+              className="h-12 w-full rounded-xl border border-coffee-cappuccino bg-white px-3 text-base text-coffee-darkRoast outline-none transition focus:border-coffee-mocha focus:ring-2 focus:ring-coffee-latte"
             />
           </label>
 
@@ -290,13 +290,13 @@ export function AppointmentFormModal({
               rows={3}
               value={formValues.observacoes}
               onChange={(event) => setFormValues((previous) => ({ ...previous, observacoes: event.target.value }))}
-              className="w-full rounded-xl border border-coffee-macchiato bg-white px-3 py-3 text-base text-coffee-darkRoast outline-none transition focus:border-coffee-mocha focus:ring-2 focus:ring-coffee-cappuccino/70"
+              className="w-full rounded-xl border border-coffee-cappuccino bg-white px-3 py-3 text-base text-coffee-darkRoast outline-none transition focus:border-coffee-mocha focus:ring-2 focus:ring-coffee-latte"
               placeholder="Observações do atendimento"
             />
           </label>
         </div>
 
-        <div className="mt-4 rounded-xl border border-coffee-cappuccino bg-white/90 px-3 py-2 text-sm text-coffee-darkRoast">
+        <div className="mt-4 rounded-xl border border-coffee-cappuccino bg-coffee-latte/35 px-3 py-2 text-sm text-coffee-darkRoast">
           {formValues.horaInicio
             ? `Previsão de término: ${buildEndTime(formValues.horaInicio, formValues.duracao || 0)}`
             : 'Selecione uma hora de início para calcular o término.'}

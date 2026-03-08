@@ -237,8 +237,8 @@ export function DailyScheduleSection({ selectedDate }: DailyScheduleSectionProps
   }
 
   return (
-    <section className="rounded-3xl border border-coffee-cappuccino/70 bg-coffee-latte/75 p-3.5 shadow-card sm:p-6">
-      <div className="flex flex-col gap-4 border-b border-coffee-cappuccino/70 pb-4 sm:flex-row sm:items-end sm:justify-between">
+    <section className="rounded-3xl border border-coffee-cappuccino/70 bg-white p-4 shadow-card sm:p-7">
+      <div className="flex flex-col gap-5 border-b border-coffee-cappuccino/70 pb-5 sm:flex-row sm:items-end sm:justify-between">
         <div>
           <p className="text-xs font-semibold uppercase tracking-[0.2em] text-coffee-espresso">Horários do dia selecionado</p>
           <h3 className="mt-2 text-lg font-semibold capitalize text-coffee-darkRoast sm:text-xl">{selectedDateLabel}</h3>
@@ -248,23 +248,23 @@ export function DailyScheduleSection({ selectedDate }: DailyScheduleSectionProps
           <button type="button" onClick={() => { setPrefilledStartTime(undefined); setIsAppointmentModalOpen(true); }} className="min-h-12 rounded-xl border border-coffee-mocha bg-coffee-mocha px-4 text-sm font-semibold text-white transition hover:bg-coffee-hazelnut">
             + Novo agendamento
           </button>
-          <button type="button" onClick={() => setIsBlockModalOpen(true)} className="min-h-12 rounded-xl border border-coffee-hazelnut bg-white px-4 text-sm font-semibold text-coffee-darkRoast transition hover:bg-coffee-latte">
+          <button type="button" onClick={() => setIsBlockModalOpen(true)} className="min-h-12 rounded-xl border border-coffee-cappuccino bg-white px-4 text-sm font-semibold text-coffee-darkRoast transition hover:bg-coffee-latte">
             Bloquear horário
           </button>
         </div>
       </div>
 
-      <div className="mt-4 rounded-2xl border border-coffee-cappuccino/70 bg-white/70 p-3 sm:p-4">
+      <div className="mt-6 rounded-2xl border border-coffee-cappuccino/70 bg-coffee-latte/35 p-4 sm:p-5">
         <p className="text-xs font-semibold uppercase tracking-[0.18em] text-coffee-espresso">Adicionar horário personalizado</p>
         <div className="mt-2 flex flex-col gap-2 sm:flex-row">
-          <input type="time" value={newCustomTime} onChange={(event) => setNewCustomTime(event.target.value)} className="min-h-12 w-full rounded-xl border border-coffee-macchiato bg-white px-3 text-base font-medium text-coffee-darkRoast focus:border-coffee-mocha focus:outline-none focus:ring-2 focus:ring-coffee-cappuccino/60 sm:max-w-44 sm:text-sm" aria-label="Selecionar horário personalizado" />
-          <button type="button" onClick={handleAddCustomTime} className="min-h-12 rounded-xl border border-coffee-hazelnut bg-coffee-latte px-4 text-sm font-semibold text-coffee-darkRoast transition hover:bg-coffee-cappuccino">
+          <input type="time" value={newCustomTime} onChange={(event) => setNewCustomTime(event.target.value)} className="min-h-12 w-full rounded-xl border border-coffee-cappuccino bg-white px-3 text-base font-medium text-coffee-darkRoast focus:border-coffee-mocha focus:outline-none focus:ring-2 focus:ring-coffee-latte sm:max-w-44 sm:text-sm" aria-label="Selecionar horário personalizado" />
+          <button type="button" onClick={handleAddCustomTime} className="min-h-12 rounded-xl border border-coffee-cappuccino bg-white px-4 text-sm font-semibold text-coffee-darkRoast transition hover:bg-coffee-latte">
             Adicionar horário
           </button>
         </div>
       </div>
 
-      <div className="mt-4">
+      <div className="mt-6">
         <TimeGrid slots={slots} appointments={appointments} blocks={blocks} onClickAppointment={() => undefined} onClickEmptySlot={(time) => { setPrefilledStartTime(time); setIsAppointmentModalOpen(true); }} />
       </div>
 
