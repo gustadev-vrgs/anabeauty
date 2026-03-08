@@ -8,7 +8,6 @@ const fakeClients: Client[] = [
     phone: '(11) 99999-0000',
     email: 'maria@example.com',
     createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
   },
 ];
 

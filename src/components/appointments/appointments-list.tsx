@@ -5,13 +5,16 @@ const fakeAppointments: Appointment[] = [
   {
     id: '1',
     clientId: 'client-1',
+    clientName: 'Maria Clara',
     serviceId: 'service-1',
-    startsAt: new Date().toISOString(),
-    endsAt: new Date(Date.now() + 60 * 60000).toISOString(),
+    serviceName: 'Design de sobrancelha',
+    date: '2026-03-09',
+    startTime: '09:00',
+    endTime: '10:00',
+    durationMinutes: 60,
     price: 180,
-    status: 'confirmed',
+    status: 'agendado',
     createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
   },
 ];
 
@@ -22,8 +25,10 @@ export function AppointmentsList() {
       <ul className="space-y-2">
         {fakeAppointments.map((appointment) => (
           <li key={appointment.id} className="rounded-xl border border-coffee-cappuccino bg-white p-3">
-            <p className="font-medium text-coffee-darkRoast">Atendimento agendado</p>
-            <p className="text-sm text-coffee-espresso">{new Date(appointment.startsAt).toLocaleString('pt-BR')}</p>
+            <p className="font-medium text-coffee-darkRoast">{appointment.clientName}</p>
+            <p className="text-sm text-coffee-espresso">
+              {appointment.date} às {appointment.startTime}
+            </p>
           </li>
         ))}
       </ul>

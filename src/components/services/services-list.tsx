@@ -5,11 +5,10 @@ const fakeServices: Service[] = [
   {
     id: 'service-1',
     name: 'Design de sobrancelha',
-    durationInMinutes: 60,
+    durationMinutes: 60,
     price: 120,
-    active: true,
+    availableForBooking: true,
     createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
   },
 ];
 
@@ -21,7 +20,7 @@ export function ServicesList() {
         {fakeServices.map((service) => (
           <li key={service.id} className="rounded-xl border border-coffee-cappuccino bg-white p-3">
             <p className="font-medium text-coffee-darkRoast">{service.name}</p>
-            <p className="text-sm text-coffee-espresso">{service.durationInMinutes} min • R$ {service.price}</p>
+            <p className="text-sm text-coffee-espresso">{service.durationMinutes} min • R$ {service.price}</p>
           </li>
         ))}
       </ul>
