@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from 'react';
 import { AppointmentFormModal } from '@/components/agenda/appointment-form-modal';
+import { TimeBlockModal, type TimeBlockFormValues } from '@/components/agenda/time-block-modal';
 import {
   mockAppointmentClients,
   mockAppointmentServices,
@@ -12,6 +13,7 @@ import {
   mockDailyAppointments,
   mockDailyBlocks,
   type ScheduleAppointment,
+  type ScheduleBlock,
 } from '@/components/agenda/mock-daily-schedule';
 import { TimeGrid } from '@/components/agenda/time-grid';
 
@@ -34,15 +36,17 @@ export function DailyScheduleSection({ selectedDate }: DailyScheduleSectionProps
 
   const defaultSlots = useMemo(() => generateHalfHourSlots(8, 20), []);
   const [isAppointmentModalOpen, setIsAppointmentModalOpen] = useState(false);
+  const [isBlockModalOpen, setIsBlockModalOpen] = useState(false);
   const [prefilledStartTime, setPrefilledStartTime] = useState<string | undefined>(undefined);
   const [createdAppointments, setCreatedAppointments] = useState<ScheduleAppointment[]>([]);
+  const [createdBlocks, setCreatedBlocks] = useState<ScheduleBlock[]>([]);
   const [customSlotsByDate, setCustomSlotsByDate] = useState<Record<string, string[]>>({});
   const [newCustomTime, setNewCustomTime] = useState('');
 
   const appointments = [...mockDailyAppointments, ...createdAppointments].filter(
     (appointment) => appointment.date === dateKey,
   );
-  const blocks = mockDailyBlocks.filter((block) => block.date === dateKey);
+  const blocks = [...mockDailyBlocks, ...createdBlocks].filter((block) => block.date === dateKey);
   const appointmentConflicts = [
     ...appointments.map((appointment) => ({
       startTime: appointment.startTime,
@@ -59,8 +63,10 @@ export function DailyScheduleSection({ selectedDate }: DailyScheduleSectionProps
   const slots = useMemo(() => {
     const customSlotsForDay = customSlotsByDate[dateKey] ?? [];
 
-    return [...new Set([...defaultSlots, ...customSlotsForDay])].sort(sortTimes);
-  }, [customSlotsByDate, dateKey, defaultSlots]);
+    const dynamicSlots = [...appointments.map((item) => item.startTime), ...blocks.map((item) => item.startTime)];
+
+    return [...new Set([...defaultSlots, ...customSlotsForDay, ...dynamicSlots])].sort(sortTimes);
+  }, [appointments, blocks, customSlotsByDate, dateKey, defaultSlots]);
 
   const selectedDateLabel = selectedDate.toLocaleDateString('pt-BR', {
     weekday: 'long',
@@ -96,9 +102,7 @@ export function DailyScheduleSection({ selectedDate }: DailyScheduleSectionProps
   }
 
   function handleBlockSchedule() {
-    // Placeholder de UX até integração com modal/formulário real.
-    // eslint-disable-next-line no-console
-    console.log('Bloquear horário');
+    setIsBlockModalOpen(true);
   }
 
   function handleOpenClientRegister() {
@@ -153,6 +157,58 @@ export function DailyScheduleSection({ selectedDate }: DailyScheduleSectionProps
         procedureName: service.name,
       },
     ]);
+  }
+
+  function createDateRange(startDate: string, endDate: string) {
+    const dates: string[] = [];
+    const cursor = new Date(`${startDate}T00:00:00`);
+    const limit = new Date(`${endDate}T00:00:00`);
+
+    while (cursor <= limit) {
+      dates.push(formatDateKey(cursor));
+      cursor.setDate(cursor.getDate() + 1);
+    }
+
+    return dates;
+  }
+
+  function handleCreateTimeBlock(values: TimeBlockFormValues) {
+    const coveredDates = createDateRange(values.dataInicio, values.dataFim);
+
+    const generatedBlocks = coveredDates.map((currentDate, index) => {
+      const isFirstDay = index === 0;
+      const isLastDay = index === coveredDates.length - 1;
+
+      let startTime = values.horaInicio || '08:00';
+      let endTime = values.horaFim || '20:00';
+
+      if (values.tipoBloqueio === 'dia_inteiro') {
+        startTime = '08:00';
+        endTime = '20:00';
+      }
+
+      if (values.tipoBloqueio === 'intervalo' && coveredDates.length > 1) {
+        if (!isFirstDay) {
+          startTime = '08:00';
+        }
+
+        if (!isLastDay) {
+          endTime = '20:00';
+        }
+      }
+
+      return {
+        id: `blk-local-${Date.now()}-${currentDate}`,
+        date: currentDate,
+        startTime,
+        endTime,
+        reason: values.observacoes || 'Horário bloqueado',
+        blockType: values.tipoBloqueio,
+        notes: values.observacoes,
+      } satisfies ScheduleBlock;
+    });
+
+    setCreatedBlocks((previous) => [...previous, ...generatedBlocks]);
   }
 
   return (
@@ -221,6 +277,14 @@ export function DailyScheduleSection({ selectedDate }: DailyScheduleSectionProps
         initialStartTime={prefilledStartTime}
         onQuickCreateClient={handleOpenClientRegister}
         onSubmit={handleCreateAppointment}
+      />
+
+      <TimeBlockModal
+        open={isBlockModalOpen}
+        onClose={() => setIsBlockModalOpen(false)}
+        initialDate={dateKey}
+        existingConflicts={appointmentConflicts}
+        onSubmit={handleCreateTimeBlock}
       />
     </section>
   );
