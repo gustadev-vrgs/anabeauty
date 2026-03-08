@@ -13,8 +13,8 @@ const variantStyles: Record<ButtonVariant, string> = {
   primary:
     'bg-primary text-primary-foreground shadow-card hover:bg-coffee-hazelnut active:bg-coffee-darkRoast',
   secondary:
-    'bg-secondary text-secondary-foreground border border-border hover:bg-coffee-caramel/70',
-  ghost: 'bg-transparent text-foreground hover:bg-coffee-cappuccino/70',
+    'bg-secondary text-secondary-foreground border border-border hover:bg-coffee-latte',
+  ghost: 'bg-transparent text-foreground hover:bg-coffee-latte',
   destructive: 'bg-destructive text-destructive-foreground hover:bg-coffee-darkRoast',
 };
 

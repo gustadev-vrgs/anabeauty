@@ -26,8 +26,8 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
         id={inputId}
         ref={ref}
         className={cn(
-          'h-11 w-full rounded-xl border border-border bg-coffee-latte px-3 text-sm text-foreground placeholder:text-muted-foreground transition-colors duration-150',
-          'focus:border-coffee-espresso focus:outline-none focus:ring-2 focus:ring-coffee-cappuccino/60',
+          'h-11 w-full rounded-xl border border-border bg-white px-3 text-sm text-foreground placeholder:text-muted-foreground transition-colors duration-150',
+          'focus:border-coffee-mocha focus:outline-none focus:ring-2 focus:ring-coffee-latte',
           error ? 'border-destructive focus:border-destructive focus:ring-destructive/30' : '',
           className,
         )}

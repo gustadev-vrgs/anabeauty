@@ -9,7 +9,7 @@ export default function AgendaPage() {
   const [selectedDate, setSelectedDate] = useState(new Date());
 
   return (
-    <div className="mx-auto w-full max-w-6xl space-y-5 sm:space-y-6 lg:space-y-8">
+    <div className="mx-auto w-full max-w-6xl space-y-6 sm:space-y-8 lg:space-y-10">
       <PageTitle
         title="Agenda"
         subtitle="Escolha um dia no calendário para iniciar o agendamento."

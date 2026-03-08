@@ -4,27 +4,27 @@
 
 :root {
   color-scheme: light;
-  --background: #f5e6d3;
+  --background: #ffffff;
   --foreground: #2a1a13;
 
   --primary: #a86f47;
-  --primary-foreground: #f5e6d3;
+  --primary-foreground: #ffffff;
 
-  --secondary: #d2aa7b;
+  --secondary: #f7efe4;
   --secondary-foreground: #4c2b1c;
 
-  --muted: #ecc9a8;
-  --muted-foreground: #6b5e29;
+  --muted: #f8f2ea;
+  --muted-foreground: #7a6051;
 
-  --accent: #c58a53;
+  --accent: #f5e6d3;
   --accent-foreground: #2a1a13;
 
-  --border: #d2aa7b;
+  --border: #dcc0a5;
 
   --destructive: #8c5a3a;
   --destructive-foreground: #f5e6d3;
 
-  --ring: #6b5e29;
+  --ring: #a86f47;
 }
 
 * {
@@ -72,7 +72,7 @@ select {
 }
 
 ::selection {
-  background: #d2aa7b;
+  background: #f5e6d3;
   color: #2a1a13;
 }
 

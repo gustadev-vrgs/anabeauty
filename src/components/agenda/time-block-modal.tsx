@@ -240,7 +240,7 @@ export function TimeBlockModal({
     <div className="fixed inset-0 z-50 flex items-end justify-center bg-coffee-blackCoffee/45 px-0 py-0 backdrop-blur-sm sm:px-4 sm:py-8 sm:items-center">
       <button type="button" aria-label="Fechar modal" className="absolute inset-0" onClick={onClose} />
 
-      <section className="relative z-10 max-h-[100dvh] w-full max-w-xl overflow-y-auto overscroll-contain rounded-t-3xl border border-coffee-cappuccino bg-coffee-cream p-4 pb-[max(1rem,env(safe-area-inset-bottom))] pt-[max(1rem,env(safe-area-inset-top))] shadow-elevated sm:max-h-[88vh] sm:rounded-3xl sm:p-6">
+      <section className="relative z-10 max-h-[100dvh] w-full max-w-xl overflow-y-auto overscroll-contain rounded-t-3xl border border-coffee-cappuccino bg-white p-4 pb-[max(1rem,env(safe-area-inset-bottom))] pt-[max(1rem,env(safe-area-inset-top))] shadow-elevated sm:max-h-[88vh] sm:rounded-3xl sm:p-6">
         <header className="mb-5 space-y-1">
           <p className="text-xs font-semibold uppercase tracking-[0.2em] text-coffee-espresso">Agenda</p>
           <h2 className="text-xl font-semibold text-coffee-darkRoast sm:text-2xl">Bloquear horário</h2>
@@ -254,7 +254,7 @@ export function TimeBlockModal({
             <select
               value={values.tipoBloqueio}
               onChange={(event) => handleTypeChange(event.target.value as TimeBlockType)}
-              className="h-12 w-full rounded-xl border border-coffee-macchiato bg-white px-3 text-base text-coffee-darkRoast outline-none transition focus:border-coffee-mocha focus:ring-2 focus:ring-coffee-cappuccino/70"
+              className="h-12 w-full rounded-xl border border-coffee-cappuccino bg-white px-3 text-base text-coffee-darkRoast outline-none transition focus:border-coffee-mocha focus:ring-2 focus:ring-coffee-latte"
             >
               {blockTypeOptions.map((option) => (
                 <option key={option.value} value={option.value}>
@@ -280,7 +280,7 @@ export function TimeBlockModal({
                     dataFim: previous.tipoBloqueio === 'horario_unico' ? event.target.value : previous.dataFim,
                   }))
                 }
-                className="h-12 w-full rounded-xl border border-coffee-macchiato bg-white px-3 text-base text-coffee-darkRoast outline-none transition focus:border-coffee-mocha focus:ring-2 focus:ring-coffee-cappuccino/70"
+                className="h-12 w-full rounded-xl border border-coffee-cappuccino bg-white px-3 text-base text-coffee-darkRoast outline-none transition focus:border-coffee-mocha focus:ring-2 focus:ring-coffee-latte"
               />
             </label>
 
@@ -292,7 +292,7 @@ export function TimeBlockModal({
                   value={values.dataFim}
                   min={values.dataInicio}
                   onChange={(event) => setValues((previous) => ({ ...previous, dataFim: event.target.value }))}
-                  className="h-12 w-full rounded-xl border border-coffee-macchiato bg-white px-3 text-base text-coffee-darkRoast outline-none transition focus:border-coffee-mocha focus:ring-2 focus:ring-coffee-cappuccino/70"
+                  className="h-12 w-full rounded-xl border border-coffee-cappuccino bg-white px-3 text-base text-coffee-darkRoast outline-none transition focus:border-coffee-mocha focus:ring-2 focus:ring-coffee-latte"
                 />
               </label>
             ) : null}
@@ -305,7 +305,7 @@ export function TimeBlockModal({
                     type="time"
                     value={values.horaInicio}
                     onChange={(event) => setValues((previous) => ({ ...previous, horaInicio: event.target.value }))}
-                    className="h-12 w-full rounded-xl border border-coffee-macchiato bg-white px-3 text-base text-coffee-darkRoast outline-none transition focus:border-coffee-mocha focus:ring-2 focus:ring-coffee-cappuccino/70"
+                    className="h-12 w-full rounded-xl border border-coffee-cappuccino bg-white px-3 text-base text-coffee-darkRoast outline-none transition focus:border-coffee-mocha focus:ring-2 focus:ring-coffee-latte"
                   />
                 </label>
 
@@ -315,7 +315,7 @@ export function TimeBlockModal({
                     type="time"
                     value={values.horaFim}
                     onChange={(event) => setValues((previous) => ({ ...previous, horaFim: event.target.value }))}
-                    className="h-12 w-full rounded-xl border border-coffee-macchiato bg-white px-3 text-base text-coffee-darkRoast outline-none transition focus:border-coffee-mocha focus:ring-2 focus:ring-coffee-cappuccino/70"
+                    className="h-12 w-full rounded-xl border border-coffee-cappuccino bg-white px-3 text-base text-coffee-darkRoast outline-none transition focus:border-coffee-mocha focus:ring-2 focus:ring-coffee-latte"
                   />
                 </label>
               </>
@@ -329,7 +329,7 @@ export function TimeBlockModal({
               value={values.observacoes}
               onChange={(event) => setValues((previous) => ({ ...previous, observacoes: event.target.value }))}
               placeholder="Ex.: almoço, compromisso pessoal, pausa técnica..."
-              className="w-full rounded-xl border border-coffee-macchiato bg-white px-3 py-3 text-base text-coffee-darkRoast outline-none transition focus:border-coffee-mocha focus:ring-2 focus:ring-coffee-cappuccino/70"
+              className="w-full rounded-xl border border-coffee-cappuccino bg-white px-3 py-3 text-base text-coffee-darkRoast outline-none transition focus:border-coffee-mocha focus:ring-2 focus:ring-coffee-latte"
             />
           </label>
         </div>
