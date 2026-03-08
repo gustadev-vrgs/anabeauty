@@ -1,8 +1,10 @@
 'use client';
 
-import { FormEvent, useEffect, useMemo, useState } from 'react';
+import { FormEvent, useCallback, useEffect, useMemo, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { AutosaveIndicator } from '@/components/ui/autosave-indicator';
+import { useFormDraft } from '@/hooks/use-form-draft';
 import { cn } from '@/utils/cn';
 
 export type ClientFormValues = {
@@ -22,7 +24,7 @@ type ClientFormModalProps = {
   mode: ClientFormModalMode;
   initialValues?: Partial<ClientFormValues>;
   onClose: () => void;
-  onSubmit: (values: ClientFormValues) => void;
+  onSubmit: (values: ClientFormValues) => Promise<void>;
 };
 
 const initialFormValues: ClientFormValues = {
@@ -54,6 +56,8 @@ function validateEmail(email: string) {
 export function ClientFormModal({ open, mode, initialValues, onClose, onSubmit }: ClientFormModalProps) {
   const [values, setValues] = useState<ClientFormValues>(initialFormValues);
   const [errors, setErrors] = useState<Partial<Record<keyof ClientFormValues, string>>>({});
+  const [submitError, setSubmitError] = useState('');
+  const [isSaving, setIsSaving] = useState(false);
   const [showContactExtras, setShowContactExtras] = useState(true);
   const [showProfileExtras, setShowProfileExtras] = useState(false);
 
@@ -81,16 +85,30 @@ export function ClientFormModal({ open, mode, initialValues, onClose, onSubmit }
     };
   }, [open, onClose]);
 
+  const sanitizedInitialValues = useMemo(() => sanitizeValues(initialValues), [initialValues]);
+
+  const handleRestoreDraft = useCallback((nextValues: ClientFormValues) => {
+    setValues(nextValues);
+  }, []);
+
+  const { clearDraft, draftSavedAt, wasRestored } = useFormDraft({
+    draftKey: 'draft-client-form',
+    enabled: open,
+    values,
+    initialValues: sanitizedInitialValues,
+    onRestore: handleRestoreDraft,
+  });
+
   useEffect(() => {
     if (!open) {
       return;
     }
 
-    setValues(sanitizeValues(initialValues));
     setErrors({});
+    setSubmitError('');
     setShowContactExtras(true);
     setShowProfileExtras(mode === 'edit');
-  }, [open, initialValues, mode]);
+  }, [open, mode]);
 
   const hasAnyOptionalValue = useMemo(
     () => Boolean(values.email || values.instagram || values.notes || values.address || values.birthDate),
@@ -101,7 +119,7 @@ export function ClientFormModal({ open, mode, initialValues, onClose, onSubmit }
     return null;
   }
 
-  function handleSubmit(event: FormEvent<HTMLFormElement>) {
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
     const nextErrors: Partial<Record<keyof ClientFormValues, string>> = {};
@@ -128,7 +146,7 @@ export function ClientFormModal({ open, mode, initialValues, onClose, onSubmit }
 
     setErrors({});
 
-    onSubmit({
+    const payload = {
       name: values.name.trim(),
       phone: values.phone.trim(),
       email: values.email.trim(),
@@ -136,7 +154,20 @@ export function ClientFormModal({ open, mode, initialValues, onClose, onSubmit }
       notes: values.notes.trim(),
       address: values.address.trim(),
       birthDate: values.birthDate,
-    });
+    };
+
+    setIsSaving(true);
+    setSubmitError('');
+
+    try {
+      await onSubmit(payload);
+      clearDraft();
+      onClose();
+    } catch {
+      setSubmitError('Não foi possível salvar agora. Seu rascunho continua seguro para nova tentativa.');
+    } finally {
+      setIsSaving(false);
+    }
   }
 
   return (
@@ -157,6 +188,7 @@ export function ClientFormModal({ open, mode, initialValues, onClose, onSubmit }
           <p className="text-sm text-coffee-espresso">
             Comece com o essencial e expanda os campos extras apenas quando necessário.
           </p>
+          <AutosaveIndicator savedAt={draftSavedAt} restored={wasRestored} />
         </header>
 
         <form className="space-y-4" onSubmit={handleSubmit} noValidate>
@@ -276,12 +308,18 @@ export function ClientFormModal({ open, mode, initialValues, onClose, onSubmit }
             <p className="text-xs text-coffee-espresso">Dica: você pode salvar só com nome e telefone.</p>
           ) : null}
 
+          {submitError ? <p className="text-sm text-red-700">{submitError}</p> : null}
+
           <div className="flex flex-col-reverse gap-2 border-t border-coffee-cappuccino/70 pt-4 sm:flex-row sm:justify-end">
             <Button type="button" variant="secondary" onClick={onClose} className="w-full sm:w-auto">
               Cancelar
             </Button>
-            <Button type="submit" className="w-full bg-coffee-mocha text-coffee-cream hover:bg-coffee-espresso sm:w-auto">
-              Salvar Cliente
+            <Button
+              type="submit"
+              disabled={isSaving}
+              className="w-full bg-coffee-mocha text-coffee-cream hover:bg-coffee-espresso sm:w-auto"
+            >
+              {isSaving ? 'Salvando...' : 'Salvar Cliente'}
             </Button>
           </div>
         </form>

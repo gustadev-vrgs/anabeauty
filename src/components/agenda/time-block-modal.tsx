@@ -1,7 +1,9 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Button } from '@/components/ui/button';
+import { AutosaveIndicator } from '@/components/ui/autosave-indicator';
+import { useFormDraft } from '@/hooks/use-form-draft';
 import type { TimeBlockType } from '@/types';
 
 export type TimeBlockFormValues = {
@@ -24,7 +26,7 @@ type TimeBlockModalProps = {
   initialDate: string;
   existingConflicts: TimeBlockConflict[];
   onClose: () => void;
-  onSubmit: (values: TimeBlockFormValues) => void;
+  onSubmit: (values: TimeBlockFormValues) => Promise<void>;
 };
 
 const blockTypeOptions: Array<{ value: TimeBlockType; label: string; description: string }> = [
@@ -95,6 +97,7 @@ export function TimeBlockModal({
     observacoes: '',
   });
   const [errorMessage, setErrorMessage] = useState('');
+  const [isSaving, setIsSaving] = useState(false);
 
   useEffect(() => {
     if (!open) {
@@ -109,21 +112,34 @@ export function TimeBlockModal({
     };
   }, [open]);
 
+  const initialFormValues = useMemo(() => ({
+    tipoBloqueio: 'horario_unico' as const,
+    dataInicio: initialDate,
+    horaInicio: '',
+    dataFim: initialDate,
+    horaFim: '',
+    observacoes: '',
+  }), [initialDate]);
+
+  const handleRestoreDraft = useCallback((nextValues: TimeBlockFormValues) => {
+    setValues(nextValues);
+  }, []);
+
+  const { clearDraft, draftSavedAt, wasRestored } = useFormDraft({
+    draftKey: 'draft-timeblock-form',
+    enabled: open,
+    values,
+    initialValues: initialFormValues,
+    onRestore: handleRestoreDraft,
+  });
+
   useEffect(() => {
     if (!open) {
       return;
     }
 
-    setValues({
-      tipoBloqueio: 'horario_unico',
-      dataInicio: initialDate,
-      horaInicio: '',
-      dataFim: initialDate,
-      horaFim: '',
-      observacoes: '',
-    });
     setErrorMessage('');
-  }, [initialDate, open]);
+  }, [open]);
 
   const conflict = useMemo(() => hasTimeOverlap(values, existingConflicts), [existingConflicts, values]);
 
@@ -157,7 +173,7 @@ export function TimeBlockModal({
     });
   }
 
-  function handleConfirm() {
+  async function handleConfirm() {
     if (!values.dataInicio) {
       setErrorMessage('Selecione a data de início do bloqueio.');
       return;
@@ -201,11 +217,20 @@ export function TimeBlockModal({
     }
 
     setErrorMessage('');
-    onSubmit({
-      ...values,
-      dataFim: endDate,
-    });
-    onClose();
+    setIsSaving(true);
+
+    try {
+      await onSubmit({
+        ...values,
+        dataFim: endDate,
+      });
+      clearDraft();
+      onClose();
+    } catch {
+      setErrorMessage('Não foi possível salvar agora. Seu rascunho foi preservado para tentar de novo.');
+    } finally {
+      setIsSaving(false);
+    }
   }
 
   const shouldShowEndDate = values.tipoBloqueio !== 'horario_unico';
@@ -220,6 +245,7 @@ export function TimeBlockModal({
           <p className="text-xs font-semibold uppercase tracking-[0.2em] text-coffee-espresso">Agenda</p>
           <h2 className="text-xl font-semibold text-coffee-darkRoast sm:text-2xl">Bloquear horário</h2>
           <p className="text-sm text-coffee-espresso">Defina períodos de almoço, pausa ou indisponibilidade.</p>
+          <AutosaveIndicator savedAt={draftSavedAt} restored={wasRestored} />
         </header>
 
         <div className="space-y-4">
@@ -322,8 +348,8 @@ export function TimeBlockModal({
           <Button variant="secondary" className="h-12" onClick={onClose}>
             Cancelar
           </Button>
-          <Button className="h-12 bg-coffee-mocha text-white hover:bg-coffee-hazelnut" onClick={handleConfirm}>
-            Bloquear
+          <Button disabled={isSaving} className="h-12 bg-coffee-mocha text-white hover:bg-coffee-hazelnut" onClick={handleConfirm}>
+            {isSaving ? 'Salvando...' : 'Bloquear'}
           </Button>
         </div>
       </section>

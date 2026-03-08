@@ -1,8 +1,10 @@
 'use client';
 
-import { FormEvent, useEffect, useState } from 'react';
+import { FormEvent, useCallback, useEffect, useMemo, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { AutosaveIndicator } from '@/components/ui/autosave-indicator';
+import { useFormDraft } from '@/hooks/use-form-draft';
 import { cn } from '@/utils/cn';
 
 export type ServiceFormValues = {
@@ -22,7 +24,7 @@ type ServiceFormModalProps = {
   mode: ServiceFormModalMode;
   initialValues?: Partial<ServiceFormValues>;
   onClose: () => void;
-  onSubmit: (values: ServiceFormValues) => void;
+  onSubmit: (values: ServiceFormValues) => Promise<void>;
 };
 
 const initialFormValues: ServiceFormValues = {
@@ -59,6 +61,8 @@ function isValidUrl(url: string) {
 export function ServiceFormModal({ open, mode, initialValues, onClose, onSubmit }: ServiceFormModalProps) {
   const [values, setValues] = useState<ServiceFormValues>(initialFormValues);
   const [errors, setErrors] = useState<Partial<Record<keyof ServiceFormValues, string>>>({});
+  const [submitError, setSubmitError] = useState('');
+  const [isSaving, setIsSaving] = useState(false);
 
   useEffect(() => {
     if (!open) {
@@ -82,14 +86,28 @@ export function ServiceFormModal({ open, mode, initialValues, onClose, onSubmit 
     };
   }, [open, onClose]);
 
+  const sanitizedInitialValues = useMemo(() => sanitizeValues(initialValues), [initialValues]);
+
+  const handleRestoreDraft = useCallback((nextValues: ServiceFormValues) => {
+    setValues(nextValues);
+  }, []);
+
+  const { clearDraft, draftSavedAt, wasRestored } = useFormDraft({
+    draftKey: 'draft-service-form',
+    enabled: open,
+    values,
+    initialValues: sanitizedInitialValues,
+    onRestore: handleRestoreDraft,
+  });
+
   useEffect(() => {
     if (!open) {
       return;
     }
 
-    setValues(sanitizeValues(initialValues));
     setErrors({});
-  }, [open, initialValues]);
+    setSubmitError('');
+  }, [open]);
 
   if (!open) {
     return null;
@@ -97,7 +115,7 @@ export function ServiceFormModal({ open, mode, initialValues, onClose, onSubmit 
 
   const title = mode === 'edit' ? 'Editar serviço/procedimento' : 'Novo serviço/procedimento';
 
-  function handleSubmit(event: FormEvent<HTMLFormElement>) {
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
     const nextErrors: Partial<Record<keyof ServiceFormValues, string>> = {};
@@ -135,7 +153,7 @@ export function ServiceFormModal({ open, mode, initialValues, onClose, onSubmit 
 
     setErrors({});
 
-    onSubmit({
+    const payload = {
       nome: values.nome.trim(),
       categoria: values.categoria.trim(),
       valor: parsedValor.toFixed(2),
@@ -143,7 +161,20 @@ export function ServiceFormModal({ open, mode, initialValues, onClose, onSubmit 
       descricao: values.descricao.trim(),
       availableForBooking: values.availableForBooking,
       imageUrl: values.imageUrl?.trim() ?? '',
-    });
+    };
+
+    setIsSaving(true);
+    setSubmitError('');
+
+    try {
+      await onSubmit(payload);
+      clearDraft();
+      onClose();
+    } catch {
+      setSubmitError('Não foi possível salvar agora. Seu rascunho foi mantido para nova tentativa.');
+    } finally {
+      setIsSaving(false);
+    }
   }
 
   return (
@@ -162,6 +193,7 @@ export function ServiceFormModal({ open, mode, initialValues, onClose, onSubmit 
             {title}
           </h2>
           <p className="mt-2 text-sm text-coffee-espresso/90">Preencha os dados para manter seu catálogo elegante e pronto para agendamentos.</p>
+          <AutosaveIndicator savedAt={draftSavedAt} restored={wasRestored} />
         </header>
 
         <form className="flex-1 overflow-y-auto px-4 pb-6 pt-4 sm:px-7" onSubmit={handleSubmit} noValidate>
@@ -254,12 +286,14 @@ export function ServiceFormModal({ open, mode, initialValues, onClose, onSubmit 
             </div>
           </div>
 
+          {submitError ? <p className="mt-4 text-sm text-red-700">{submitError}</p> : null}
+
           <div className="sticky bottom-0 mt-5 flex flex-col-reverse gap-2 border-t border-coffee-cappuccino/70 bg-coffee-cream/95 pb-[max(0.25rem,env(safe-area-inset-bottom))] pt-4 backdrop-blur sm:flex-row sm:justify-end">
             <Button type="button" variant="secondary" onClick={onClose} className="w-full sm:w-auto">
               Cancelar
             </Button>
-            <Button type="submit" className="w-full bg-coffee-mocha text-coffee-cream hover:bg-coffee-espresso sm:w-auto">
-              Salvar Serviço
+            <Button type="submit" disabled={isSaving} className="w-full bg-coffee-mocha text-coffee-cream hover:bg-coffee-espresso sm:w-auto">
+              {isSaving ? 'Salvando...' : 'Salvar Serviço'}
             </Button>
           </div>
         </form>

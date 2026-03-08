@@ -6,6 +6,8 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Service } from '@/types';
 import { ServiceFormModal, type ServiceFormValues } from '@/components/services/service-form-modal';
+import { createService, deleteService, listServices, updateService } from '@/services/firestore/services.firestore';
+import { useCachedCollection } from '@/hooks/use-cached-collection';
 
 const mockServices: Service[] = [
   {
@@ -16,27 +18,6 @@ const mockServices: Service[] = [
     category: 'Estética Facial',
     description: 'Higienização profunda com extração e máscara calmante.',
     availableForBooking: true,
-    imageUrl: 'https://images.unsplash.com/photo-1556228578-8c89e6adf883',
-    createdAt: new Date().toISOString(),
-  },
-  {
-    id: 'service-2',
-    name: 'Design de Sobrancelhas',
-    price: 70,
-    durationMinutes: 40,
-    category: 'Olhar',
-    description: 'Mapeamento e definição personalizada.',
-    availableForBooking: true,
-    createdAt: new Date().toISOString(),
-  },
-  {
-    id: 'service-3',
-    name: 'Hidratação Capilar Intensiva',
-    price: 150,
-    durationMinutes: 60,
-    category: 'Cabelos',
-    description: 'Tratamento nutritivo para reconstrução da fibra.',
-    availableForBooking: false,
     createdAt: new Date().toISOString(),
   },
 ];
@@ -46,7 +27,11 @@ function formatCurrency(value: number) {
 }
 
 export function ServicesList() {
-  const [services, setServices] = useState<Service[]>(mockServices);
+  const { data: services, error, loading, updateCache } = useCachedCollection<Service>({
+    cacheKey: 'services',
+    loader: listServices,
+    fallbackData: mockServices,
+  });
   const [search, setSearch] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingServiceId, setEditingServiceId] = useState<string | null>(null);
@@ -66,22 +51,7 @@ export function ServicesList() {
     [services, editingServiceId],
   );
 
-  function openNewServiceModal() {
-    setEditingServiceId(null);
-    setIsModalOpen(true);
-  }
-
-  function openEditServiceModal(service: Service) {
-    setEditingServiceId(service.id);
-    setIsModalOpen(true);
-  }
-
-  function closeModal() {
-    setIsModalOpen(false);
-    setEditingServiceId(null);
-  }
-
-  function handleSubmitService(values: ServiceFormValues) {
+  async function handleSubmitService(values: ServiceFormValues) {
     const payload: Omit<Service, 'id' | 'createdAt'> = {
       name: values.nome,
       price: Number(values.valor),
@@ -93,88 +63,44 @@ export function ServicesList() {
     };
 
     if (editingServiceId) {
-      setServices((previous) =>
-        previous.map((service) => (service.id === editingServiceId ? { ...service, ...payload } : service)),
-      );
-    } else {
-      const newService: Service = {
-        id: `service-${Date.now()}`,
-        createdAt: new Date().toISOString(),
-        ...payload,
-      };
-
-      setServices((previous) => [newService, ...previous]);
+      await updateService(editingServiceId, payload);
+      updateCache((previous) => previous.map((service) => (service.id === editingServiceId ? { ...service, ...payload } : service)));
+      return;
     }
 
-    closeModal();
+    const newService: Service = {
+      id: `service-${Date.now()}`,
+      createdAt: new Date().toISOString(),
+      ...payload,
+    };
+
+    await createService(newService);
+    updateCache((previous) => [newService, ...previous]);
   }
 
-  function handleDeleteService(serviceId: string) {
-    setServices((previous) => previous.filter((service) => service.id !== serviceId));
+  async function handleDeleteService(serviceId: string) {
+    await deleteService(serviceId);
+    updateCache((previous) => previous.filter((service) => service.id !== serviceId));
   }
 
   return (
     <Card className="space-y-5 bg-coffee-latte/55">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <Input
-          value={search}
-          onChange={(event) => setSearch(event.target.value)}
-          placeholder="Buscar serviço por nome"
-          aria-label="Buscar serviço"
-          className="sm:max-w-sm"
-        />
-        <Button onClick={openNewServiceModal} className="w-full bg-coffee-mocha text-coffee-cream hover:bg-coffee-espresso sm:w-auto">
+        <Input value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Buscar serviço por nome" aria-label="Buscar serviço" className="sm:max-w-sm" />
+        <Button onClick={() => { setEditingServiceId(null); setIsModalOpen(true); }} className="w-full bg-coffee-mocha text-coffee-cream hover:bg-coffee-espresso sm:w-auto">
           Novo Serviço
         </Button>
       </div>
 
-      <div className="hidden overflow-hidden rounded-xl border border-coffee-cappuccino lg:block">
-        <table className="w-full border-collapse text-left text-sm">
-          <thead className="bg-coffee-cappuccino/65 text-coffee-darkRoast">
-            <tr>
-              <th className="px-4 py-3 font-semibold">Nome</th>
-              <th className="px-4 py-3 font-semibold">Valor</th>
-              <th className="px-4 py-3 font-semibold">Duração</th>
-              <th className="px-4 py-3 font-semibold">Categoria</th>
-              <th className="px-4 py-3 font-semibold">Disponível</th>
-              <th className="px-4 py-3 text-right font-semibold">Ações</th>
-            </tr>
-          </thead>
-          <tbody className="bg-white/85">
-            {filteredServices.map((service) => (
-              <tr key={service.id} className="border-t border-coffee-cappuccino/70 text-coffee-blackCoffee">
-                <td className="px-4 py-3 font-medium">{service.name}</td>
-                <td className="px-4 py-3">{formatCurrency(service.price)}</td>
-                <td className="px-4 py-3">{service.durationMinutes} min</td>
-                <td className="px-4 py-3">{service.category || '—'}</td>
-                <td className="px-4 py-3">
-                  <span
-                    className={`rounded-full px-3 py-1 text-xs font-semibold ${
-                      service.availableForBooking
-                        ? 'bg-coffee-cappuccino/70 text-coffee-darkRoast'
-                        : 'bg-coffee-blackCoffee/10 text-coffee-espresso'
-                    }`}
-                  >
-                    {service.availableForBooking ? 'Sim' : 'Não'}
-                  </span>
-                </td>
-                <td className="px-4 py-3">
-                  <div className="flex justify-end gap-2">
-                    <Button variant="secondary" size="sm" onClick={() => openEditServiceModal(service)}>
-                      Editar
-                    </Button>
-                    <Button variant="destructive" size="sm" onClick={() => handleDeleteService(service.id)}>
-                      Excluir
-                    </Button>
-                  </div>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+      {error ? <p className="text-sm text-coffee-espresso">{error}</p> : null}
+      {loading ? (
+        <div className="space-y-2">
+          <div className="h-12 animate-pulse rounded-xl bg-coffee-cappuccino/40" />
+          <div className="h-12 animate-pulse rounded-xl bg-coffee-cappuccino/30" />
+        </div>
+      ) : null}
 
-      <ul className="space-y-3 lg:hidden">
+      <ul className="space-y-3">
         {filteredServices.map((service) => (
           <li key={service.id} className="space-y-3 rounded-2xl border border-coffee-cappuccino bg-white/90 p-4 shadow-sm">
             <div className="space-y-1">
@@ -185,14 +111,11 @@ export function ServicesList() {
               <span>{formatCurrency(service.price)}</span>
               <span>{service.durationMinutes} min</span>
             </div>
-            <p className="text-xs font-semibold uppercase tracking-wide text-coffee-espresso">
-              {service.availableForBooking ? 'Disponível para agendamento' : 'Indisponível para agendamento'}
-            </p>
             <div className="flex gap-2">
-              <Button variant="secondary" onClick={() => openEditServiceModal(service)} className="min-h-11 flex-1">
+              <Button variant="secondary" onClick={() => { setEditingServiceId(service.id); setIsModalOpen(true); }} className="min-h-11 flex-1">
                 Editar
               </Button>
-              <Button variant="destructive" onClick={() => handleDeleteService(service.id)} className="min-h-11 flex-1">
+              <Button variant="destructive" onClick={() => void handleDeleteService(service.id)} className="min-h-11 flex-1">
                 Excluir
               </Button>
             </div>
@@ -200,7 +123,7 @@ export function ServicesList() {
         ))}
       </ul>
 
-      {!filteredServices.length ? (
+      {!loading && !filteredServices.length ? (
         <p className="rounded-xl border border-dashed border-coffee-cappuccino bg-white/80 p-4 text-center text-sm text-coffee-espresso">
           Nenhum serviço encontrado para a busca informada.
         </p>
@@ -222,7 +145,10 @@ export function ServicesList() {
               }
             : undefined
         }
-        onClose={closeModal}
+        onClose={() => {
+          setIsModalOpen(false);
+          setEditingServiceId(null);
+        }}
         onSubmit={handleSubmitService}
       />
     </Card>
