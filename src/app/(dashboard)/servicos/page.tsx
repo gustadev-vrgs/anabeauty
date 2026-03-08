@@ -4,7 +4,10 @@ import { PageTitle } from '@/components/ui/page-title';
 export default function ServicosPage() {
   return (
     <>
-      <PageTitle title="Serviços" subtitle="Catálogo inicial de procedimentos e valores." />
+      <PageTitle
+        title="Serviços e Procedimentos"
+        subtitle="Gerencie o catálogo com busca, disponibilidade para agendamento e edição rápida."
+      />
       <ServicesList />
     </>
   );
