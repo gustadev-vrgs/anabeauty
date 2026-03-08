@@ -55,7 +55,7 @@ export function AppSidebar() {
         </nav>
       </aside>
 
-      <nav className="safe-area-bottom fixed inset-x-3 bottom-4 z-50 rounded-2xl border border-coffee-cappuccino/70 bg-coffee-latte/95 p-2 shadow-elevated backdrop-blur md:hidden" aria-label="Navegação mobile">
+      <nav className="safe-area-bottom safe-area-x fixed inset-x-2 bottom-2 z-50 rounded-2xl border border-coffee-cappuccino/70 bg-coffee-latte/95 p-2 shadow-elevated backdrop-blur md:hidden" aria-label="Navegação mobile">
         <div className="grid grid-cols-4 gap-2">
           {links.map((link) => {
             const isActive = isPathActive(pathname, link.href);
@@ -65,7 +65,7 @@ export function AppSidebar() {
                 key={link.href}
                 href={link.href}
                 className={cn(
-                  'rounded-xl px-2 py-2 text-center text-xs font-semibold transition-colors',
+                  'min-h-11 rounded-xl px-2 py-2.5 text-center text-xs font-semibold transition-colors',
                   isActive ? 'bg-coffee-mocha text-white' : 'text-coffee-darkRoast hover:bg-white/90',
                 )}
               >

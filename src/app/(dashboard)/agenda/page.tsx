@@ -9,13 +9,13 @@ export default function AgendaPage() {
   const [selectedDate, setSelectedDate] = useState(new Date());
 
   return (
-    <div className="mx-auto w-full max-w-6xl space-y-6 lg:space-y-8">
+    <div className="mx-auto w-full max-w-6xl space-y-5 sm:space-y-6 lg:space-y-8">
       <PageTitle
         title="Agenda"
         subtitle="Escolha um dia no calendário para iniciar o agendamento."
       />
 
-      <div className="mx-auto w-full max-w-5xl">
+      <div className="mx-auto w-full max-w-5xl lg:max-w-4xl xl:max-w-5xl">
         <CalendarView selectedDate={selectedDate} onSelectDate={setSelectedDate} />
       </div>
 

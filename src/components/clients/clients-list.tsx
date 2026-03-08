@@ -124,7 +124,7 @@ export function ClientsList() {
         </Button>
       </div>
 
-      <div className="hidden overflow-hidden rounded-xl border border-coffee-cappuccino md:block">
+      <div className="hidden overflow-hidden rounded-xl border border-coffee-cappuccino lg:block">
         <table className="w-full border-collapse text-left text-sm">
           <thead className="bg-coffee-cappuccino/65 text-coffee-darkRoast">
             <tr>
@@ -156,11 +156,11 @@ export function ClientsList() {
         </table>
       </div>
 
-      <ul className="space-y-3 md:hidden">
+      <ul className="space-y-3 lg:hidden">
         {filteredClients.map((client) => (
           <li
             key={client.id}
-            className="space-y-2 rounded-xl border border-coffee-cappuccino bg-white/85 p-4 shadow-sm"
+            className="space-y-3 rounded-2xl border border-coffee-cappuccino bg-white/90 p-4 shadow-sm"
           >
             <div>
               <p className="font-semibold text-coffee-darkRoast">{client.name}</p>
@@ -169,13 +169,12 @@ export function ClientsList() {
             {client.email ? <p className="text-sm text-coffee-espresso">{client.email}</p> : null}
             {client.instagram ? <p className="text-sm text-coffee-espresso">{client.instagram}</p> : null}
             <div className="flex gap-2">
-              <Button variant="secondary" size="sm" className="flex-1" onClick={() => openEditClientModal(client)}>
+              <Button variant="secondary" className="min-h-11 flex-1" onClick={() => openEditClientModal(client)}>
                 Editar
               </Button>
               <Button
                 variant="destructive"
-                size="sm"
-                className="flex-1"
+                className="min-h-11 flex-1"
                 onClick={() => handleDeleteClient(client.id)}
               >
                 Excluir

@@ -212,7 +212,7 @@ export function DailyScheduleSection({ selectedDate }: DailyScheduleSectionProps
   }
 
   return (
-    <section className="rounded-3xl border border-coffee-cappuccino/70 bg-coffee-latte/75 p-4 shadow-card sm:p-6">
+    <section className="rounded-3xl border border-coffee-cappuccino/70 bg-coffee-latte/75 p-3.5 shadow-card sm:p-6">
       <div className="flex flex-col gap-4 border-b border-coffee-cappuccino/70 pb-4 sm:flex-row sm:items-end sm:justify-between">
         <div>
           <p className="text-xs font-semibold uppercase tracking-[0.2em] text-coffee-espresso">Horários do dia selecionado</p>
@@ -223,14 +223,14 @@ export function DailyScheduleSection({ selectedDate }: DailyScheduleSectionProps
           <button
             type="button"
             onClick={handleNewAppointment}
-            className="min-h-11 rounded-xl border border-coffee-mocha bg-coffee-mocha px-4 text-sm font-semibold text-white transition hover:bg-coffee-hazelnut"
+            className="min-h-12 rounded-xl border border-coffee-mocha bg-coffee-mocha px-4 text-sm font-semibold text-white transition hover:bg-coffee-hazelnut"
           >
             + Novo agendamento
           </button>
           <button
             type="button"
             onClick={handleBlockSchedule}
-            className="min-h-11 rounded-xl border border-coffee-hazelnut bg-white px-4 text-sm font-semibold text-coffee-darkRoast transition hover:bg-coffee-latte"
+            className="min-h-12 rounded-xl border border-coffee-hazelnut bg-white px-4 text-sm font-semibold text-coffee-darkRoast transition hover:bg-coffee-latte"
           >
             Bloquear horário
           </button>
@@ -244,13 +244,13 @@ export function DailyScheduleSection({ selectedDate }: DailyScheduleSectionProps
             type="time"
             value={newCustomTime}
             onChange={(event) => setNewCustomTime(event.target.value)}
-            className="min-h-11 w-full rounded-xl border border-coffee-macchiato bg-white px-3 text-sm font-medium text-coffee-darkRoast focus:border-coffee-mocha focus:outline-none focus:ring-2 focus:ring-coffee-cappuccino/60 sm:max-w-44"
+            className="min-h-12 w-full rounded-xl border border-coffee-macchiato bg-white px-3 text-base font-medium text-coffee-darkRoast focus:border-coffee-mocha focus:outline-none focus:ring-2 focus:ring-coffee-cappuccino/60 sm:max-w-44 sm:text-sm"
             aria-label="Selecionar horário personalizado"
           />
           <button
             type="button"
             onClick={handleAddCustomTime}
-            className="min-h-11 rounded-xl border border-coffee-hazelnut bg-coffee-latte px-4 text-sm font-semibold text-coffee-darkRoast transition hover:bg-coffee-cappuccino"
+            className="min-h-12 rounded-xl border border-coffee-hazelnut bg-coffee-latte px-4 text-sm font-semibold text-coffee-darkRoast transition hover:bg-coffee-cappuccino"
           >
             Adicionar horário
           </button>

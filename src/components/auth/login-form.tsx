@@ -30,10 +30,10 @@ export function LoginForm() {
   }
 
   return (
-    <Card className="w-full max-w-md border-coffee-macchiato/80 bg-coffee-latte/95 p-6 shadow-elevated sm:p-8">
-      <CardHeader className="mb-6 space-y-2">
+    <Card className="w-full max-w-md border-coffee-macchiato/80 bg-coffee-latte/95 p-5 shadow-elevated sm:p-8">
+      <CardHeader className="mb-5 space-y-2 sm:mb-6">
         <p className="text-xs uppercase tracking-[0.2em] text-coffee-espresso">Ana Beauty Agenda</p>
-        <CardTitle className="text-2xl sm:text-3xl">Faça seu login</CardTitle>
+        <CardTitle className="text-[1.75rem] leading-tight sm:text-3xl">Faça seu login</CardTitle>
         <CardDescription>Entre para gerenciar seus agendamentos com praticidade e elegância.</CardDescription>
       </CardHeader>
 
@@ -49,7 +49,7 @@ export function LoginForm() {
             value={email}
             onChange={(event) => setEmail(event.target.value)}
             required
-            className="h-12 text-base sm:text-sm"
+            className="h-12 text-base"
           />
 
           <Input
@@ -61,7 +61,7 @@ export function LoginForm() {
             value={password}
             onChange={(event) => setPassword(event.target.value)}
             required
-            className="h-12 text-base sm:text-sm"
+            className="h-12 text-base"
             helperText="Use no mínimo 6 caracteres."
           />
 
@@ -71,7 +71,7 @@ export function LoginForm() {
             </p>
           ) : null}
 
-          <Button type="submit" className="h-12 w-full text-base sm:text-sm" disabled={loading}>
+          <Button type="submit" className="h-12 w-full text-base" disabled={loading}>
             {loading ? 'Entrando...' : 'Entrar'}
           </Button>
         </form>
