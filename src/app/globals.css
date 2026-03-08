@@ -71,3 +71,10 @@ select {
   background: #d2aa7b;
   color: #2a1a13;
 }
+
+
+@supports (padding: max(0px)) {
+  .safe-area-bottom {
+    padding-bottom: max(0.5rem, env(safe-area-inset-bottom));
+  }
+}
