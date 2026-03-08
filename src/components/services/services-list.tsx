@@ -128,7 +128,7 @@ export function ServicesList() {
         </Button>
       </div>
 
-      <div className="hidden overflow-hidden rounded-xl border border-coffee-cappuccino md:block">
+      <div className="hidden overflow-hidden rounded-xl border border-coffee-cappuccino lg:block">
         <table className="w-full border-collapse text-left text-sm">
           <thead className="bg-coffee-cappuccino/65 text-coffee-darkRoast">
             <tr>
@@ -174,9 +174,9 @@ export function ServicesList() {
         </table>
       </div>
 
-      <ul className="space-y-3 md:hidden">
+      <ul className="space-y-3 lg:hidden">
         {filteredServices.map((service) => (
-          <li key={service.id} className="space-y-3 rounded-xl border border-coffee-cappuccino bg-white/90 p-4 shadow-sm">
+          <li key={service.id} className="space-y-3 rounded-2xl border border-coffee-cappuccino bg-white/90 p-4 shadow-sm">
             <div className="space-y-1">
               <p className="font-semibold text-coffee-darkRoast">{service.name}</p>
               <p className="text-sm text-coffee-espresso">{service.category}</p>
@@ -189,10 +189,10 @@ export function ServicesList() {
               {service.availableForBooking ? 'Disponível para agendamento' : 'Indisponível para agendamento'}
             </p>
             <div className="flex gap-2">
-              <Button variant="secondary" size="sm" onClick={() => openEditServiceModal(service)} className="flex-1">
+              <Button variant="secondary" onClick={() => openEditServiceModal(service)} className="min-h-11 flex-1">
                 Editar
               </Button>
-              <Button variant="destructive" size="sm" onClick={() => handleDeleteService(service.id)} className="flex-1">
+              <Button variant="destructive" onClick={() => handleDeleteService(service.id)} className="min-h-11 flex-1">
                 Excluir
               </Button>
             </div>

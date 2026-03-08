@@ -147,14 +147,14 @@ export function ServiceFormModal({ open, mode, initialValues, onClose, onSubmit 
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-end justify-center bg-coffee-blackCoffee/45 p-2 backdrop-blur-sm sm:items-center sm:p-6">
+    <div className="fixed inset-0 z-50 flex items-end justify-center bg-coffee-blackCoffee/45 p-0 backdrop-blur-sm sm:items-center sm:p-6">
       <button type="button" aria-label="Fechar modal" className="absolute inset-0" onClick={onClose} />
 
       <section
         role="dialog"
         aria-modal="true"
         aria-labelledby="service-form-modal-title"
-        className="relative z-10 flex max-h-[96dvh] w-full max-w-3xl flex-col overflow-hidden rounded-3xl border border-coffee-cappuccino bg-coffee-cream shadow-elevated"
+        className="relative z-10 flex max-h-[100dvh] w-full max-w-3xl flex-col overflow-hidden rounded-t-3xl border border-coffee-cappuccino bg-coffee-cream shadow-elevated sm:max-h-[96dvh] sm:rounded-3xl"
       >
         <header className="border-b border-coffee-cappuccino/75 px-4 pb-4 pt-5 sm:px-7 sm:pt-6">
           <p className="text-xs font-semibold uppercase tracking-[0.2em] text-coffee-espresso">Cadastro de procedimentos</p>

@@ -40,7 +40,7 @@ export function CalendarView({ selectedDate, onSelectDate }: CalendarViewProps) 
   }
 
   return (
-    <section className="rounded-3xl border border-coffee-cappuccino/70 bg-coffee-latte/90 p-4 shadow-card sm:p-6 lg:p-8">
+    <section className="rounded-3xl border border-coffee-cappuccino/70 bg-coffee-latte/90 p-3 shadow-card sm:p-6 lg:p-8">
       <header className="mb-6 space-y-4 border-b border-coffee-cappuccino/70 pb-4">
         <p className="text-xs font-semibold uppercase tracking-[0.2em] text-coffee-espresso">Hoje · {todayLabel}</p>
 
@@ -48,18 +48,18 @@ export function CalendarView({ selectedDate, onSelectDate }: CalendarViewProps) 
           <button
             type="button"
             onClick={() => handleMonthChange(-1)}
-            className="rounded-full border border-coffee-macchiato bg-white px-4 py-2 text-sm font-semibold text-coffee-darkRoast transition hover:border-coffee-mocha hover:text-coffee-mocha"
+            className="min-h-11 rounded-full border border-coffee-macchiato bg-white px-4 py-2 text-sm font-semibold text-coffee-darkRoast transition hover:border-coffee-mocha hover:text-coffee-mocha"
             aria-label="Mês anterior"
           >
             ← Anterior
           </button>
 
-          <h2 className="text-xl font-semibold capitalize text-coffee-darkRoast sm:text-2xl">{monthLabel}</h2>
+          <h2 className="text-lg font-semibold capitalize text-coffee-darkRoast sm:text-2xl">{monthLabel}</h2>
 
           <button
             type="button"
             onClick={() => handleMonthChange(1)}
-            className="rounded-full border border-coffee-macchiato bg-white px-4 py-2 text-sm font-semibold text-coffee-darkRoast transition hover:border-coffee-mocha hover:text-coffee-mocha"
+            className="min-h-11 rounded-full border border-coffee-macchiato bg-white px-4 py-2 text-sm font-semibold text-coffee-darkRoast transition hover:border-coffee-mocha hover:text-coffee-mocha"
             aria-label="Próximo mês"
           >
             Próximo →
@@ -67,13 +67,13 @@ export function CalendarView({ selectedDate, onSelectDate }: CalendarViewProps) 
         </div>
       </header>
 
-      <div className="grid grid-cols-7 gap-2 text-center text-xs font-semibold uppercase tracking-wide text-coffee-espresso sm:gap-3 sm:text-sm">
+      <div className="grid grid-cols-7 gap-1.5 text-center text-[11px] font-semibold uppercase tracking-wide text-coffee-espresso sm:gap-3 sm:text-sm">
         {weekDays.map((day) => (
           <span key={day}>{day}</span>
         ))}
       </div>
 
-      <div className="mt-3 grid grid-cols-7 gap-2 sm:gap-3">
+      <div className="mt-2.5 grid grid-cols-7 gap-1.5 sm:mt-3 sm:gap-3">
         {monthDays.map((day) => {
           const isCurrentMonth = day.getMonth() === visibleMonth.getMonth();
           const isSelected = isSameDay(day, selectedDate);
@@ -85,7 +85,7 @@ export function CalendarView({ selectedDate, onSelectDate }: CalendarViewProps) 
               type="button"
               onClick={() => onSelectDate(day)}
               className={cn(
-                'aspect-square min-h-10 rounded-2xl border text-sm font-medium transition sm:text-base',
+                'aspect-square min-h-11 rounded-xl border text-sm font-medium transition sm:min-h-12 sm:rounded-2xl sm:text-base',
                 isCurrentMonth
                   ? 'border-coffee-cappuccino/70 bg-white text-coffee-darkRoast hover:border-coffee-mocha'
                   : 'border-transparent bg-coffee-cappuccino/20 text-coffee-hazelnut/70',

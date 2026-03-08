@@ -36,11 +36,15 @@ html,
 body {
   margin: 0;
   min-height: 100%;
+  width: 100%;
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
 }
 
 body {
   @apply bg-background text-foreground antialiased;
   font-feature-settings: 'kern' 1, 'liga' 1;
+  overscroll-behavior-y: none;
 }
 
 a {
@@ -76,5 +80,16 @@ select {
 @supports (padding: max(0px)) {
   .safe-area-bottom {
     padding-bottom: max(0.5rem, env(safe-area-inset-bottom));
+  }
+}
+
+@supports (padding: max(0px)) {
+  .safe-area-top {
+    padding-top: max(0.5rem, env(safe-area-inset-top));
+  }
+
+  .safe-area-x {
+    padding-left: max(0.75rem, env(safe-area-inset-left));
+    padding-right: max(0.75rem, env(safe-area-inset-right));
   }
 }

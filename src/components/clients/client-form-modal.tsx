@@ -140,14 +140,14 @@ export function ClientFormModal({ open, mode, initialValues, onClose, onSubmit }
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-end justify-center bg-coffee-blackCoffee/40 px-3 py-2 backdrop-blur-sm sm:items-center sm:px-4 sm:py-8">
+    <div className="fixed inset-0 z-50 flex items-end justify-center bg-coffee-blackCoffee/40 px-0 py-0 backdrop-blur-sm sm:px-4 sm:py-8 sm:items-center">
       <button type="button" aria-label="Fechar modal" className="absolute inset-0" onClick={onClose} />
 
       <section
         role="dialog"
         aria-modal="true"
         aria-labelledby="client-form-modal-title"
-        className="relative z-10 max-h-[94vh] w-full max-w-2xl overflow-y-auto rounded-3xl border border-coffee-cappuccino bg-coffee-cream p-4 pb-[max(1rem,env(safe-area-inset-bottom))] shadow-elevated sm:max-h-[88vh] sm:p-6"
+        className="relative z-10 max-h-[100dvh] w-full max-w-2xl overflow-y-auto overscroll-contain rounded-t-3xl border border-coffee-cappuccino bg-coffee-cream p-4 pb-[max(1rem,env(safe-area-inset-bottom))] pt-[max(1rem,env(safe-area-inset-top))] shadow-elevated sm:max-h-[88vh] sm:rounded-3xl sm:p-6"
       >
         <header className="mb-5 space-y-1">
           <p className="text-xs font-semibold uppercase tracking-[0.2em] text-coffee-espresso">Cadastro rápido</p>
