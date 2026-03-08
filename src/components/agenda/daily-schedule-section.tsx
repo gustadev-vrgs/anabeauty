@@ -1,6 +1,11 @@
 'use client';
 
 import { useMemo, useState } from 'react';
+import { AppointmentFormModal } from '@/components/agenda/appointment-form-modal';
+import {
+  mockAppointmentClients,
+  mockAppointmentServices,
+} from '@/components/agenda/appointment-form-mocks';
 import {
   formatDateKey,
   generateHalfHourSlots,
@@ -28,11 +33,28 @@ export function DailyScheduleSection({ selectedDate }: DailyScheduleSectionProps
   const dateKey = formatDateKey(selectedDate);
 
   const defaultSlots = useMemo(() => generateHalfHourSlots(8, 20), []);
+  const [isAppointmentModalOpen, setIsAppointmentModalOpen] = useState(false);
+  const [prefilledStartTime, setPrefilledStartTime] = useState<string | undefined>(undefined);
+  const [createdAppointments, setCreatedAppointments] = useState<ScheduleAppointment[]>([]);
   const [customSlotsByDate, setCustomSlotsByDate] = useState<Record<string, string[]>>({});
   const [newCustomTime, setNewCustomTime] = useState('');
 
-  const appointments = mockDailyAppointments.filter((appointment) => appointment.date === dateKey);
+  const appointments = [...mockDailyAppointments, ...createdAppointments].filter(
+    (appointment) => appointment.date === dateKey,
+  );
   const blocks = mockDailyBlocks.filter((block) => block.date === dateKey);
+  const appointmentConflicts = [
+    ...appointments.map((appointment) => ({
+      startTime: appointment.startTime,
+      endTime: appointment.endTime,
+      label: `agendamento de ${appointment.clientName}`,
+    })),
+    ...blocks.map((block) => ({
+      startTime: block.startTime,
+      endTime: block.endTime,
+      label: block.reason ? `bloqueio: ${block.reason}` : 'bloqueio de horário',
+    })),
+  ];
 
   const slots = useMemo(() => {
     const customSlotsForDay = customSlotsByDate[dateKey] ?? [];
@@ -69,15 +91,20 @@ export function DailyScheduleSection({ selectedDate }: DailyScheduleSectionProps
   }
 
   function handleNewAppointment() {
-    // Placeholder de UX até integração com modal/formulário real.
-    // eslint-disable-next-line no-console
-    console.log('Novo agendamento');
+    setPrefilledStartTime(undefined);
+    setIsAppointmentModalOpen(true);
   }
 
   function handleBlockSchedule() {
     // Placeholder de UX até integração com modal/formulário real.
     // eslint-disable-next-line no-console
     console.log('Bloquear horário');
+  }
+
+  function handleOpenClientRegister() {
+    // Placeholder de UX até integração com cadastro de clientes real.
+    // eslint-disable-next-line no-console
+    console.log('Abrir cadastro de nova cliente');
   }
 
   function handleEditAppointment(appointment: ScheduleAppointment) {
@@ -87,9 +114,45 @@ export function DailyScheduleSection({ selectedDate }: DailyScheduleSectionProps
   }
 
   function handleQuickCreate(time: string) {
-    // Placeholder de UX até integração com criação rápida real.
-    // eslint-disable-next-line no-console
-    console.log('Criar agendamento rápido', dateKey, time);
+    setPrefilledStartTime(time);
+    setIsAppointmentModalOpen(true);
+  }
+
+  function buildEndTime(startTime: string, duration: number) {
+    const [hour, minute] = startTime.split(':').map(Number);
+    const startMinutes = hour * 60 + minute;
+    const endMinutes = startMinutes + duration;
+    const endHour = String(Math.floor(endMinutes / 60)).padStart(2, '0');
+    const endMinute = String(endMinutes % 60).padStart(2, '0');
+
+    return `${endHour}:${endMinute}`;
+  }
+
+  function handleCreateAppointment(values: {
+    date: string;
+    horaInicio: string;
+    servicoId: string;
+    clienteId: string;
+    duracao: number;
+  }) {
+    const service = mockAppointmentServices.find((item) => item.id === values.servicoId);
+    const client = mockAppointmentClients.find((item) => item.id === values.clienteId);
+
+    if (!service || !client) {
+      return;
+    }
+
+    setCreatedAppointments((previous) => [
+      ...previous,
+      {
+        id: `apt-local-${Date.now()}`,
+        date: values.date,
+        startTime: values.horaInicio,
+        endTime: buildEndTime(values.horaInicio, values.duracao),
+        clientName: client.name,
+        procedureName: service.name,
+      },
+    ]);
   }
 
   return (
@@ -147,6 +210,18 @@ export function DailyScheduleSection({ selectedDate }: DailyScheduleSectionProps
           onClickEmptySlot={handleQuickCreate}
         />
       </div>
+
+      <AppointmentFormModal
+        open={isAppointmentModalOpen}
+        onClose={() => setIsAppointmentModalOpen(false)}
+        clients={mockAppointmentClients}
+        services={mockAppointmentServices}
+        existingConflicts={appointmentConflicts}
+        initialDate={dateKey}
+        initialStartTime={prefilledStartTime}
+        onQuickCreateClient={handleOpenClientRegister}
+        onSubmit={handleCreateAppointment}
+      />
     </section>
   );
 }
