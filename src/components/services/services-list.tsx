@@ -83,11 +83,11 @@ export function ServicesList() {
 
   function handleSubmitService(values: ServiceFormValues) {
     const payload: Omit<Service, 'id' | 'createdAt'> = {
-      name: values.name,
-      price: Number(values.price),
-      durationMinutes: Number(values.durationMinutes),
-      category: values.category,
-      description: values.description || undefined,
+      name: values.nome,
+      price: Number(values.valor),
+      durationMinutes: Number(values.duracaoMinutos),
+      category: values.categoria,
+      description: values.descricao || undefined,
       availableForBooking: values.availableForBooking,
       imageUrl: values.imageUrl || undefined,
     };
@@ -212,11 +212,11 @@ export function ServicesList() {
         initialValues={
           editingService
             ? {
-                name: editingService.name,
-                category: editingService.category ?? '',
-                price: String(editingService.price),
-                durationMinutes: String(editingService.durationMinutes),
-                description: editingService.description ?? '',
+                nome: editingService.name,
+                categoria: editingService.category ?? '',
+                valor: String(editingService.price),
+                duracaoMinutos: String(editingService.durationMinutes),
+                descricao: editingService.description ?? '',
                 availableForBooking: editingService.availableForBooking,
                 imageUrl: editingService.imageUrl ?? '',
               }
