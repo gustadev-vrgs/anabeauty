@@ -8,6 +8,7 @@ import { Client } from '@/types';
 import { ClientFormModal, type ClientFormValues } from '@/components/clients/client-form-modal';
 import { createClient, deleteClient, listClients, updateClient } from '@/services/firestore/clients.firestore';
 import { useCachedCollection } from '@/hooks/use-cached-collection';
+import { sanitizeClientPayload } from '@/lib/security/validators';
 
 const mockClients: Client[] = [
   {
@@ -60,7 +61,7 @@ export function ClientsList() {
   };
 
   const handleSubmitClient = async (values: ClientFormValues) => {
-    const payload: Omit<Client, 'id' | 'createdAt'> = {
+    const validation = sanitizeClientPayload({
       name: values.name,
       phone: values.phone,
       email: values.email || undefined,
@@ -68,25 +69,35 @@ export function ClientsList() {
       notes: values.notes || undefined,
       address: values.address || undefined,
       birthDate: values.birthDate || undefined,
-    };
+    });
+
+    if (!validation.success) {
+      throw new Error(validation.message);
+    }
 
     if (editingClientId) {
-      await updateClient(editingClientId, payload);
-      updateCache((previous) => previous.map((client) => (client.id === editingClientId ? { ...client, ...payload } : client)));
+      await updateClient(editingClientId, validation.data);
+      updateCache((previous) => previous.map((client) => (client.id === editingClientId ? { ...client, ...validation.data } : client)));
       return;
     }
 
     const newClient: Client = {
       id: `client-${Date.now()}`,
       createdAt: new Date().toISOString(),
-      ...payload,
+      ...validation.data,
     };
 
     await createClient(newClient);
     updateCache((previous) => [newClient, ...previous]);
   };
 
-  const handleDeleteClient = async (clientId: string) => {
+  const handleDeleteClient = async (clientId: string, clientName: string) => {
+    const confirmed = window.confirm(`Deseja excluir a cliente ${clientName}? Essa ação não pode ser desfeita.`);
+
+    if (!confirmed) {
+      return;
+    }
+
     await deleteClient(clientId);
     updateCache((previous) => previous.filter((client) => client.id !== clientId));
   };
@@ -128,7 +139,7 @@ export function ClientsList() {
               <Button variant="secondary" className="min-h-11 flex-1" onClick={() => { setEditingClientId(client.id); setIsModalOpen(true); }}>
                 Editar
               </Button>
-              <Button variant="destructive" className="min-h-11 flex-1" onClick={() => void handleDeleteClient(client.id)}>
+              <Button variant="destructive" className="min-h-11 flex-1" onClick={() => void handleDeleteClient(client.id, client.name)}>
                 Excluir
               </Button>
             </div>

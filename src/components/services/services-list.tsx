@@ -8,6 +8,7 @@ import { Service } from '@/types';
 import { ServiceFormModal, type ServiceFormValues } from '@/components/services/service-form-modal';
 import { createService, deleteService, listServices, updateService } from '@/services/firestore/services.firestore';
 import { useCachedCollection } from '@/hooks/use-cached-collection';
+import { sanitizeServicePayload } from '@/lib/security/validators';
 
 const mockServices: Service[] = [
   {
@@ -52,7 +53,7 @@ export function ServicesList() {
   );
 
   async function handleSubmitService(values: ServiceFormValues) {
-    const payload: Omit<Service, 'id' | 'createdAt'> = {
+    const validation = sanitizeServicePayload({
       name: values.nome,
       price: Number(values.valor),
       durationMinutes: Number(values.duracaoMinutos),
@@ -60,25 +61,35 @@ export function ServicesList() {
       description: values.descricao || undefined,
       availableForBooking: values.availableForBooking,
       imageUrl: values.imageUrl || undefined,
-    };
+    });
+
+    if (!validation.success) {
+      throw new Error(validation.message);
+    }
 
     if (editingServiceId) {
-      await updateService(editingServiceId, payload);
-      updateCache((previous) => previous.map((service) => (service.id === editingServiceId ? { ...service, ...payload } : service)));
+      await updateService(editingServiceId, validation.data);
+      updateCache((previous) => previous.map((service) => (service.id === editingServiceId ? { ...service, ...validation.data } : service)));
       return;
     }
 
     const newService: Service = {
       id: `service-${Date.now()}`,
       createdAt: new Date().toISOString(),
-      ...payload,
+      ...validation.data,
     };
 
     await createService(newService);
     updateCache((previous) => [newService, ...previous]);
   }
 
-  async function handleDeleteService(serviceId: string) {
+  async function handleDeleteService(serviceId: string, serviceName: string) {
+    const confirmed = window.confirm(`Deseja excluir o serviço ${serviceName}? Essa ação não pode ser desfeita.`);
+
+    if (!confirmed) {
+      return;
+    }
+
     await deleteService(serviceId);
     updateCache((previous) => previous.filter((service) => service.id !== serviceId));
   }
@@ -115,7 +126,7 @@ export function ServicesList() {
               <Button variant="secondary" onClick={() => { setEditingServiceId(service.id); setIsModalOpen(true); }} className="min-h-11 flex-1">
                 Editar
               </Button>
-              <Button variant="destructive" onClick={() => void handleDeleteService(service.id)} className="min-h-11 flex-1">
+              <Button variant="destructive" onClick={() => void handleDeleteService(service.id, service.name)} className="min-h-11 flex-1">
                 Excluir
               </Button>
             </div>

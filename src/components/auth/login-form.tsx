@@ -1,26 +1,53 @@
 'use client';
 
-import { FormEvent, useState } from 'react';
+import { FormEvent, useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { authenticateUser } from '@/services/auth.service';
 import { Button, Card, CardContent, CardDescription, CardHeader, CardTitle, Input } from '@/components/ui';
+import { useAuth } from '@/hooks/use-auth';
+
+function getSafeNextPath(nextPath: string | null) {
+  if (!nextPath || !nextPath.startsWith('/')) {
+    return '/agenda';
+  }
+
+  return nextPath;
+}
 
 export function LoginForm() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const { isAuthenticated, loading: authLoading } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  const nextPath = useMemo(() => getSafeNextPath(searchParams.get('next')), [searchParams]);
+
+  useEffect(() => {
+    if (!authLoading && isAuthenticated) {
+      router.replace(nextPath);
+    }
+  }, [authLoading, isAuthenticated, nextPath, router]);
+
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setError(null);
+
+    const normalizedEmail = email.trim().toLowerCase();
+
+    if (!normalizedEmail || !password) {
+      setError('Informe e-mail e senha para continuar.');
+      return;
+    }
+
     setLoading(true);
 
     try {
-      await authenticateUser(email, password);
-      router.push('/agenda');
+      await authenticateUser(normalizedEmail, password);
+      router.replace(nextPath);
     } catch (submitError) {
       const message = submitError instanceof Error ? submitError.message : 'Ocorreu um erro ao entrar.';
       setError(message);
@@ -34,53 +61,41 @@ export function LoginForm() {
       <CardHeader className="mb-5 space-y-2 sm:mb-6">
         <p className="text-xs uppercase tracking-[0.2em] text-coffee-espresso">Ana Beauty Agenda</p>
         <CardTitle className="text-[1.75rem] leading-tight sm:text-3xl">Faça seu login</CardTitle>
-        <CardDescription>Entre para gerenciar seus agendamentos com praticidade e elegância.</CardDescription>
+        <CardDescription>Entre para gerenciar seus agendamentos com segurança.</CardDescription>
       </CardHeader>
 
-      <CardContent className="space-y-4">
-        <form className="space-y-4" onSubmit={handleSubmit}>
+      <CardContent>
+        <form onSubmit={handleSubmit} className="space-y-4" noValidate>
           <Input
             label="E-mail"
-            name="email"
             type="email"
-            inputMode="email"
             autoComplete="email"
-            placeholder="voce@exemplo.com"
             value={email}
             onChange={(event) => setEmail(event.target.value)}
             required
-            className="h-12 text-base"
           />
-
           <Input
             label="Senha"
-            name="password"
             type="password"
             autoComplete="current-password"
-            placeholder="Digite sua senha"
             value={password}
             onChange={(event) => setPassword(event.target.value)}
             required
-            className="h-12 text-base"
-            helperText="Use no mínimo 6 caracteres."
           />
 
-          {error ? (
-            <p className="rounded-xl border border-coffee-caramel/70 bg-coffee-cappuccino/40 px-3 py-2 text-sm text-coffee-darkRoast">
-              {error}
-            </p>
-          ) : null}
+          {error ? <p className="rounded-lg bg-red-50 p-2 text-sm text-red-700">{error}</p> : null}
 
-          <Button type="submit" className="h-12 w-full text-base" disabled={loading}>
-            {loading ? 'Entrando...' : 'Entrar'}
+          <Button type="submit" className="w-full bg-coffee-mocha text-coffee-cream hover:bg-coffee-espresso" disabled={loading || authLoading}>
+            {loading || authLoading ? 'Entrando...' : 'Entrar'}
           </Button>
-        </form>
 
-        <div className="text-center">
-          <Link href="#" className="text-sm text-coffee-espresso underline-offset-4 hover:underline">
-            Esqueci minha senha
-          </Link>
-        </div>
+          <p className="text-center text-xs text-coffee-espresso">
+            Ao entrar, você concorda com as políticas internas de segurança e privacidade.
+          </p>
+          <p className="text-center text-xs text-coffee-espresso">
+            Precisa de ajuda? <Link href="mailto:suporte@anabeauty.com" className="underline">Fale com o suporte</Link>
+          </p>
+        </form>
       </CardContent>
     </Card>
   );

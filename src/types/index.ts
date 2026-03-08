@@ -4,7 +4,13 @@ export type AppointmentStatus = 'agendado' | 'concluido' | 'cancelado';
 
 export type TimeBlockType = 'horario_unico' | 'intervalo' | 'dia_inteiro';
 
-export interface User {
+export interface FirestoreMetadata {
+  ownerId?: string;
+  createdBy?: string;
+  updatedAt?: string;
+}
+
+export interface User extends FirestoreMetadata {
   id: string;
   name: string;
   email: string;
@@ -12,7 +18,7 @@ export interface User {
   createdAt: string;
 }
 
-export interface Client {
+export interface Client extends FirestoreMetadata {
   id: string;
   name: string;
   phone: string;
@@ -24,7 +30,7 @@ export interface Client {
   createdAt: string;
 }
 
-export interface Service {
+export interface Service extends FirestoreMetadata {
   id: string;
   name: string;
   price: number;
@@ -36,7 +42,7 @@ export interface Service {
   createdAt: string;
 }
 
-export interface Appointment {
+export interface Appointment extends FirestoreMetadata {
   id: string;
   clientId: string;
   clientName: string;
@@ -52,7 +58,7 @@ export interface Appointment {
   createdAt: string;
 }
 
-export interface TimeBlock {
+export interface TimeBlock extends FirestoreMetadata {
   id: string;
   date: string;
   startTime: string;
