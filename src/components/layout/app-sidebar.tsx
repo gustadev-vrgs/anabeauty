@@ -10,7 +10,6 @@ const links = [
   { href: '/agenda', label: 'Agenda' },
   { href: '/clientes', label: 'Clientes' },
   { href: '/servicos', label: 'Serviços' },
-  { href: '/dashboard', label: 'Dashboard' },
 ];
 
 function isPathActive(pathname: string, href: string) {
@@ -24,6 +23,7 @@ export function AppSidebar() {
   async function handleLogout() {
     await logout();
     router.replace('/login');
+    router.refresh();
   }
 
   return (
@@ -68,7 +68,7 @@ export function AppSidebar() {
       </aside>
 
       <nav className="safe-area-bottom safe-area-x fixed inset-x-2 bottom-2 z-50 rounded-2xl border border-coffee-cappuccino/70 bg-white p-2 shadow-elevated backdrop-blur md:hidden" aria-label="Navegação mobile">
-        <div className="grid grid-cols-4 gap-2">
+        <div className="grid gap-2" style={{ gridTemplateColumns: `repeat(${links.length}, minmax(0, 1fr))` }}>
           {links.map((link) => {
             const isActive = isPathActive(pathname, link.href);
 
