@@ -1,7 +1,6 @@
 'use client';
 
 import { FormEvent, useEffect, useMemo, useState } from 'react';
-import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { authenticateUser } from '@/services/auth.service';
 import { Button, Card, CardContent, CardDescription, CardHeader, CardTitle, Input } from '@/components/ui';
@@ -91,12 +90,6 @@ export function LoginForm() {
             {loading || authLoading ? 'Entrando...' : 'Entrar'}
           </Button>
 
-          <p className="text-center text-xs text-coffee-espresso">
-            Ao entrar, você concorda com as políticas internas de segurança e privacidade.
-          </p>
-          <p className="text-center text-xs text-coffee-espresso">
-            Precisa de ajuda? <Link href="mailto:suporte@anabeauty.com" className="underline">Fale com o suporte</Link>
-          </p>
         </form>
       </CardContent>
     </Card>
