@@ -17,7 +17,6 @@ Base inicial de um sistema web responsivo de agendamento para profissional da á
 - `/agenda` (privada)
 - `/clientes` (privada)
 - `/servicos` (privada)
-- `/dashboard` (privada)
 
 ## Segurança implementada
 
@@ -38,7 +37,6 @@ src/
     (dashboard)/agenda/
     (dashboard)/clientes/
     (dashboard)/servicos/
-    (dashboard)/dashboard/
   components/
     auth/
     ui/

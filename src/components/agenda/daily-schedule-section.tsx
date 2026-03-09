@@ -6,8 +6,6 @@ import { TimeBlockModal, type TimeBlockFormValues } from '@/components/agenda/ti
 import {
   formatDateKey,
   generateHalfHourSlots,
-  mockDailyAppointments,
-  mockDailyBlocks,
   type ScheduleAppointment,
   type ScheduleBlock,
 } from '@/components/agenda/mock-daily-schedule';
@@ -46,8 +44,14 @@ function buildEndTime(startTime: string, duration: number) {
 export function DailyScheduleSection({ selectedDate }: DailyScheduleSectionProps) {
   const dateKey = formatDateKey(selectedDate);
 
-  const { data: clients } = useCachedCollection<Client>({ cacheKey: 'clients', loader: listClients });
-  const { data: services } = useCachedCollection<Service>({ cacheKey: 'services', loader: listServices });
+  const { data: clients, loading: clientsLoading, error: clientsError } = useCachedCollection<Client>({
+    cacheKey: 'clients',
+    loader: listClients,
+  });
+  const { data: services, loading: servicesLoading, error: servicesError } = useCachedCollection<Service>({
+    cacheKey: 'services',
+    loader: listServices,
+  });
   const { data: appointmentsData, updateCache: updateAppointmentsCache } = useCachedCollection<Appointment>({
     cacheKey: 'appointments',
     loader: listAppointments,
@@ -63,6 +67,9 @@ export function DailyScheduleSection({ selectedDate }: DailyScheduleSectionProps
   const [prefilledStartTime, setPrefilledStartTime] = useState<string | undefined>(undefined);
   const [customSlotsByDate, setCustomSlotsByDate] = useState<Record<string, string[]>>({});
   const [newCustomTime, setNewCustomTime] = useState('');
+
+  const isBaseDataLoading = clientsLoading || servicesLoading;
+  const canCreateAppointment = clients.length > 0 && services.length > 0;
 
   const appointmentScheduleItems = useMemo(
     () =>
@@ -97,8 +104,8 @@ export function DailyScheduleSection({ selectedDate }: DailyScheduleSectionProps
     [blocksData],
   );
 
-  const appointments = [...mockDailyAppointments, ...appointmentScheduleItems].filter((appointment) => appointment.date === dateKey);
-  const blocks = [...mockDailyBlocks, ...blockScheduleItems].filter((block) => block.date === dateKey);
+  const appointments = appointmentScheduleItems.filter((appointment) => appointment.date === dateKey);
+  const blocks = blockScheduleItems.filter((block) => block.date === dateKey);
 
   const appointmentConflicts = [
     ...appointments.map((appointment) => ({
@@ -245,7 +252,7 @@ export function DailyScheduleSection({ selectedDate }: DailyScheduleSectionProps
         </div>
 
         <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
-          <button type="button" onClick={() => { setPrefilledStartTime(undefined); setIsAppointmentModalOpen(true); }} className="min-h-12 rounded-xl border border-coffee-mocha bg-coffee-mocha px-4 text-sm font-semibold text-white transition hover:bg-coffee-hazelnut">
+          <button type="button" onClick={() => { setPrefilledStartTime(undefined); setIsAppointmentModalOpen(true); }} disabled={!canCreateAppointment || isBaseDataLoading} className="min-h-12 rounded-xl border border-coffee-mocha bg-coffee-mocha px-4 text-sm font-semibold text-white transition hover:bg-coffee-hazelnut disabled:cursor-not-allowed disabled:opacity-60">
             + Novo agendamento
           </button>
           <button type="button" onClick={() => setIsBlockModalOpen(true)} className="min-h-12 rounded-xl border border-coffee-cappuccino bg-white px-4 text-sm font-semibold text-coffee-darkRoast transition hover:bg-coffee-latte">
@@ -264,8 +271,35 @@ export function DailyScheduleSection({ selectedDate }: DailyScheduleSectionProps
         </div>
       </div>
 
+      {isBaseDataLoading ? (
+        <p className="mt-6 rounded-xl border border-coffee-cappuccino/70 bg-coffee-latte/45 px-4 py-3 text-sm text-coffee-espresso">
+          Carregando clientes e serviços para criar agendamentos...
+        </p>
+      ) : null}
+
+      {!isBaseDataLoading && !canCreateAppointment ? (
+        <p className="mt-6 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-700">
+          Cadastre pelo menos 1 cliente e 1 serviço para habilitar novos agendamentos.
+        </p>
+      ) : null}
+
+      {clientsError || servicesError ? (
+        <p className="mt-6 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-700">
+          {clientsError || servicesError}
+        </p>
+      ) : null}
+
       <div className="mt-6">
-        <TimeGrid slots={slots} appointments={appointments} blocks={blocks} onClickAppointment={() => undefined} onClickEmptySlot={(time) => { setPrefilledStartTime(time); setIsAppointmentModalOpen(true); }} />
+        <TimeGrid
+          slots={slots}
+          appointments={appointments}
+          blocks={blocks}
+          onClickAppointment={() => undefined}
+          onClickEmptySlot={canCreateAppointment ? (time) => {
+            setPrefilledStartTime(time);
+            setIsAppointmentModalOpen(true);
+          } : undefined}
+        />
       </div>
 
       <AppointmentFormModal

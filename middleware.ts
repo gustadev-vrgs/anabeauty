@@ -1,8 +1,8 @@
 import type { NextRequest } from 'next/server';
 import { NextResponse } from 'next/server';
+import { AUTH_SESSION_COOKIE } from '@/lib/auth-constants';
 
-const PRIVATE_PATHS = ['/agenda', '/clientes', '/servicos', '/dashboard'];
-const AUTH_SESSION_COOKIE = 'ab_session';
+const PRIVATE_PATHS = ['/agenda', '/clientes', '/servicos'];
 
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
@@ -24,5 +24,5 @@ export function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/agenda/:path*', '/clientes/:path*', '/servicos/:path*', '/dashboard/:path*'],
+  matcher: ['/agenda/:path*', '/clientes/:path*', '/servicos/:path*'],
 };

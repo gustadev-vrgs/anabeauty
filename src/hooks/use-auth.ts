@@ -3,21 +3,10 @@
 import { useEffect, useState } from 'react';
 import { onAuthStateChanged, User as FirebaseUser } from 'firebase/auth';
 import { auth } from '@/firebase/client';
+import { AUTH_SESSION_COOKIE } from '@/lib/auth-constants';
+import { setAuthSessionCookie } from '@/lib/auth-session';
 
-export const AUTH_SESSION_COOKIE = 'ab_session';
-
-function writeSessionCookie(isAuthenticated: boolean) {
-  if (typeof document === 'undefined') {
-    return;
-  }
-
-  if (isAuthenticated) {
-    document.cookie = `${AUTH_SESSION_COOKIE}=1; Path=/; Max-Age=86400; SameSite=Lax; Secure`;
-    return;
-  }
-
-  document.cookie = `${AUTH_SESSION_COOKIE}=; Path=/; Max-Age=0; SameSite=Lax; Secure`;
-}
+export { AUTH_SESSION_COOKIE };
 
 export function useAuth() {
   const [user, setUser] = useState<FirebaseUser | null>(null);
@@ -26,14 +15,14 @@ export function useAuth() {
   useEffect(() => {
     if (!auth) {
       setLoading(false);
-      writeSessionCookie(false);
+      setAuthSessionCookie(false);
       return;
     }
 
     const unsubscribe = onAuthStateChanged(auth, (nextUser) => {
       setUser(nextUser);
       setLoading(false);
-      writeSessionCookie(Boolean(nextUser));
+      setAuthSessionCookie(Boolean(nextUser));
     });
 
     return unsubscribe;

@@ -1,6 +1,7 @@
 import { FirebaseError } from 'firebase/app';
 import { signInWithEmailAndPassword, signOut } from 'firebase/auth';
 import { auth } from '@/firebase/client';
+import { setAuthSessionCookie } from '@/lib/auth-session';
 
 function mapAuthError(error: unknown) {
   if (error instanceof FirebaseError) {
@@ -25,7 +26,9 @@ export async function loginWithEmail(email: string, password: string) {
     throw new Error('Autenticação Firebase não configurada.');
   }
 
-  return signInWithEmailAndPassword(auth, email.trim().toLowerCase(), password);
+  const credential = await signInWithEmailAndPassword(auth, email.trim().toLowerCase(), password);
+  setAuthSessionCookie(true);
+  return credential;
 }
 
 export async function authenticateUser(email: string, password: string) {
@@ -39,8 +42,10 @@ export async function authenticateUser(email: string, password: string) {
 
 export async function logout() {
   if (!auth) {
+    setAuthSessionCookie(false);
     return;
   }
 
   await signOut(auth);
+  setAuthSessionCookie(false);
 }
