@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { AppointmentFormModal } from '@/components/agenda/appointment-form-modal';
 import { TimeBlockModal, type TimeBlockFormValues } from '@/components/agenda/time-block-modal';
 import {
@@ -44,11 +44,11 @@ function buildEndTime(startTime: string, duration: number) {
 export function DailyScheduleSection({ selectedDate }: DailyScheduleSectionProps) {
   const dateKey = formatDateKey(selectedDate);
 
-  const { data: clients, loading: clientsLoading, error: clientsError } = useCachedCollection<Client>({
+  const { data: clients, loading: clientsLoading } = useCachedCollection<Client>({
     cacheKey: 'clients',
     loader: listClients,
   });
-  const { data: services, loading: servicesLoading, error: servicesError } = useCachedCollection<Service>({
+  const { data: services, loading: servicesLoading } = useCachedCollection<Service>({
     cacheKey: 'services',
     loader: listServices,
   });
@@ -67,6 +67,7 @@ export function DailyScheduleSection({ selectedDate }: DailyScheduleSectionProps
   const [prefilledStartTime, setPrefilledStartTime] = useState<string | undefined>(undefined);
   const [customSlotsByDate, setCustomSlotsByDate] = useState<Record<string, string[]>>({});
   const [newCustomTime, setNewCustomTime] = useState('');
+  const [successMessage, setSuccessMessage] = useState('');
 
   const isBaseDataLoading = clientsLoading || servicesLoading;
   const canCreateAppointment = clients.length > 0 && services.length > 0;
@@ -129,9 +130,19 @@ export function DailyScheduleSection({ selectedDate }: DailyScheduleSectionProps
   const selectedDateLabel = selectedDate.toLocaleDateString('pt-BR', {
     weekday: 'long',
     day: '2-digit',
-    month: 'long',
+    month: '2-digit',
     year: 'numeric',
   });
+
+
+  useEffect(() => {
+    if (!successMessage) {
+      return;
+    }
+
+    const timer = window.setTimeout(() => setSuccessMessage(''), 3000);
+    return () => window.clearTimeout(timer);
+  }, [successMessage]);
 
   function handleAddCustomTime() {
     if (!newCustomTime) {
@@ -187,6 +198,7 @@ export function DailyScheduleSection({ selectedDate }: DailyScheduleSectionProps
 
     await createAppointment(payload);
     updateAppointmentsCache((previous) => [payload, ...previous]);
+    setSuccessMessage('Agendamento criado com sucesso.');
   }
 
   function createDateRange(startDate: string, endDate: string) {
@@ -247,8 +259,8 @@ export function DailyScheduleSection({ selectedDate }: DailyScheduleSectionProps
     <section className="rounded-3xl border border-coffee-cappuccino/70 bg-white p-4 shadow-card sm:p-7">
       <div className="flex flex-col gap-5 border-b border-coffee-cappuccino/70 pb-5 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-coffee-espresso">Horários do dia selecionado</p>
-          <h3 className="mt-2 text-lg font-semibold capitalize text-coffee-darkRoast sm:text-xl">{selectedDateLabel}</h3>
+          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-coffee-espresso">Agenda do dia</p>
+          <h3 className="mt-2 text-lg font-semibold capitalize text-coffee-darkRoast sm:text-xl">Horários de {selectedDateLabel}</h3>
         </div>
 
         <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
@@ -270,23 +282,14 @@ export function DailyScheduleSection({ selectedDate }: DailyScheduleSectionProps
           </button>
         </div>
       </div>
-
-      {isBaseDataLoading ? (
-        <p className="mt-6 rounded-xl border border-coffee-cappuccino/70 bg-coffee-latte/45 px-4 py-3 text-sm text-coffee-espresso">
-          Carregando clientes e serviços para criar agendamentos...
-        </p>
-      ) : null}
-
       {!isBaseDataLoading && !canCreateAppointment ? (
         <p className="mt-6 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-700">
           Cadastre pelo menos 1 cliente e 1 serviço para habilitar novos agendamentos.
         </p>
       ) : null}
 
-      {clientsError || servicesError ? (
-        <p className="mt-6 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-700">
-          {clientsError || servicesError}
-        </p>
+      {successMessage ? (
+        <p className="mt-6 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm font-medium text-emerald-700">{successMessage}</p>
       ) : null}
 
       <div className="mt-6">

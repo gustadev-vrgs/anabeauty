@@ -105,6 +105,23 @@ export function AppointmentFormModal({
     };
   }, [open]);
 
+
+  useEffect(() => {
+    if (!open) {
+      return;
+    }
+
+    setFormValues({
+      date: initialDate,
+      horaInicio: initialStartTime ?? '',
+      servicoId: '',
+      clienteId: '',
+      duracao: defaultDurationMinutes,
+      valor: 0,
+      observacoes: '',
+    });
+  }, [initialDate, initialStartTime, open]);
+
   const initialFormValues = useMemo(() => ({
     date: initialDate,
     horaInicio: initialStartTime ?? '',
@@ -186,6 +203,7 @@ export function AppointmentFormModal({
   }
 
   const selectedClient = clients.find((client) => client.id === formValues.clienteId);
+  const selectedService = services.find((service) => service.id === formValues.servicoId);
 
   return (
     <div className="fixed inset-0 z-50 flex items-end justify-center bg-coffee-blackCoffee/55 px-0 py-0 backdrop-blur-[2px] sm:items-center sm:px-4 sm:py-8">
@@ -200,6 +218,7 @@ export function AppointmentFormModal({
           <p className="text-xs font-semibold uppercase tracking-[0.2em] text-coffee-espresso">Agenda</p>
           <h2 id="appointment-form-modal-title" className="text-xl font-semibold text-coffee-darkRoast sm:text-2xl">Novo agendamento</h2>
           <p className="text-sm text-coffee-espresso">Preencha os dados do agendamento.</p>
+          <p className="text-sm font-medium text-coffee-darkRoast">{formValues.date || initialDate} às {formValues.horaInicio || initialStartTime || '--:--'}</p>
           <AutosaveIndicator savedAt={draftSavedAt} restored={wasRestored} />
         </header>
 
@@ -267,7 +286,7 @@ export function AppointmentFormModal({
           </div>
 
           <label className="space-y-1.5">
-            <span className="text-sm font-medium text-coffee-darkRoast">Duração (min)</span>
+            <span className="text-sm font-medium text-coffee-darkRoast">Duração automática (min)</span>
             <input
               type="number"
               min={15}
@@ -281,7 +300,7 @@ export function AppointmentFormModal({
           </label>
 
           <label className="space-y-1.5">
-            <span className="text-sm font-medium text-coffee-darkRoast">Valor (R$)</span>
+            <span className="text-sm font-medium text-coffee-darkRoast">Valor automático (R$)</span>
             <input
               type="number"
               min={0}
@@ -310,6 +329,11 @@ export function AppointmentFormModal({
             : 'Selecione uma hora de início para calcular o término.'}
         </div>
 
+
+        {selectedService ? (
+          <p className="mt-2 text-xs text-coffee-espresso">Serviço selecionado: {selectedService.name} · {selectedService.durationMinutes} min · R$ {selectedService.price.toFixed(2)}</p>
+        ) : null}
+
         {selectedClient ? <p className="mt-2 text-xs text-coffee-espresso">Contato da cliente: {selectedClient.phone}</p> : null}
 
         {conflict ? (
@@ -327,7 +351,7 @@ export function AppointmentFormModal({
             Cancelar
           </Button>
           <Button disabled={isSaving} className="h-12 bg-coffee-mocha text-white hover:bg-coffee-hazelnut" onClick={handleSchedule}>
-            {isSaving ? 'Salvando...' : 'Salvar'}
+            {isSaving ? 'Salvando...' : 'Agendar'}
           </Button>
         </div>
       </section>

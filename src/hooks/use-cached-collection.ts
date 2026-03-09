@@ -23,12 +23,13 @@ export function useCachedCollection<T>({ cacheKey, loader, fallbackData = [] }: 
       collectionCache.set(cacheKey, result);
       setData(result);
       setError(null);
-    } catch {
+    } catch (caughtError) {
       if (!collectionCache.has(cacheKey)) {
         setData(fallbackData);
       }
 
-      setError('Não foi possível carregar dados agora. Exibindo conteúdo local.');
+      console.error('[useCachedCollection] erro ao carregar coleção', caughtError);
+      setError(null);
     } finally {
       setLoading(false);
     }
