@@ -8,7 +8,7 @@ export function MainLayout({ children }: { children: ReactNode }) {
         <AppSidebar />
 
         <div className="w-full space-y-5">
-          <header className="sticky top-2 z-30 rounded-2xl border border-coffee-cappuccino/70 bg-coffee-latte/45 px-5 py-4 shadow-card backdrop-blur sm:top-3 md:top-6 md:px-7">
+          <header className="rounded-2xl border border-coffee-cappuccino/70 bg-coffee-latte/45 px-5 py-4 shadow-card md:px-7">
             <div className="flex items-center justify-between gap-4">
               <div>
                 <p className="text-xs font-semibold uppercase tracking-[0.2em] text-coffee-espresso">Sistema</p>
