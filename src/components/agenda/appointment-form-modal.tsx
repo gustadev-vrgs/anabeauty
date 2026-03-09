@@ -2,6 +2,10 @@
 
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Button } from '@/components/ui/button';
+import { Select } from '@/components/ui/select';
+import { Textarea } from '@/components/ui/textarea';
+import { formFieldInputClass } from '@/components/ui/form-field';
+import { cn } from '@/utils/cn';
 import { AutosaveIndicator } from '@/components/ui/autosave-indicator';
 import { useFormDraft } from '@/hooks/use-form-draft';
 import type {
@@ -202,7 +206,7 @@ export function AppointmentFormModal({
               type="date"
               value={formValues.date}
               onChange={(event) => setFormValues((previous) => ({ ...previous, date: event.target.value }))}
-              className="h-12 w-full rounded-xl border border-coffee-cappuccino bg-white px-3 text-base text-coffee-darkRoast outline-none transition focus:border-coffee-mocha focus:ring-2 focus:ring-coffee-latte"
+              className={cn(formFieldInputClass, "h-12 text-base")}
             />
           </label>
 
@@ -212,16 +216,16 @@ export function AppointmentFormModal({
               type="time"
               value={formValues.horaInicio}
               onChange={(event) => setFormValues((previous) => ({ ...previous, horaInicio: event.target.value }))}
-              className="h-12 w-full rounded-xl border border-coffee-cappuccino bg-white px-3 text-base text-coffee-darkRoast outline-none transition focus:border-coffee-mocha focus:ring-2 focus:ring-coffee-latte"
+              className={cn(formFieldInputClass, "h-12 text-base")}
             />
           </label>
 
           <label className="space-y-1.5 sm:col-span-2">
             <span className="text-sm font-medium text-coffee-darkRoast">Serviço</span>
-            <select
+            <Select
               value={formValues.servicoId}
               onChange={(event) => handleServiceChange(event.target.value)}
-              className="h-12 w-full rounded-xl border border-coffee-cappuccino bg-white px-3 text-base text-coffee-darkRoast outline-none transition focus:border-coffee-mocha focus:ring-2 focus:ring-coffee-latte"
+              className={cn(formFieldInputClass, "h-12 text-base")}
             >
               <option value="">Selecione um serviço</option>
               {services.map((service) => (
@@ -229,7 +233,7 @@ export function AppointmentFormModal({
                   {service.name}
                 </option>
               ))}
-            </select>
+            </Select>
           </label>
 
           <div className="space-y-1.5 sm:col-span-2">
@@ -244,10 +248,10 @@ export function AppointmentFormModal({
               </button>
             </div>
 
-            <select
+            <Select
               value={formValues.clienteId}
               onChange={(event) => setFormValues((previous) => ({ ...previous, clienteId: event.target.value }))}
-              className="h-12 w-full rounded-xl border border-coffee-cappuccino bg-white px-3 text-base text-coffee-darkRoast outline-none transition focus:border-coffee-mocha focus:ring-2 focus:ring-coffee-latte"
+              className={cn(formFieldInputClass, "h-12 text-base")}
             >
               <option value="">Selecione uma cliente</option>
               {clients.map((client) => (
@@ -255,7 +259,7 @@ export function AppointmentFormModal({
                   {client.name} · {client.phone}
                 </option>
               ))}
-            </select>
+            </Select>
           </div>
 
           <label className="space-y-1.5">
@@ -268,7 +272,7 @@ export function AppointmentFormModal({
               onChange={(event) =>
                 setFormValues((previous) => ({ ...previous, duracao: Number(event.target.value) || 0 }))
               }
-              className="h-12 w-full rounded-xl border border-coffee-cappuccino bg-white px-3 text-base text-coffee-darkRoast outline-none transition focus:border-coffee-mocha focus:ring-2 focus:ring-coffee-latte"
+              className={cn(formFieldInputClass, "h-12 text-base")}
             />
           </label>
 
@@ -280,17 +284,17 @@ export function AppointmentFormModal({
               step={0.01}
               value={formValues.valor}
               onChange={(event) => setFormValues((previous) => ({ ...previous, valor: Number(event.target.value) || 0 }))}
-              className="h-12 w-full rounded-xl border border-coffee-cappuccino bg-white px-3 text-base text-coffee-darkRoast outline-none transition focus:border-coffee-mocha focus:ring-2 focus:ring-coffee-latte"
+              className={cn(formFieldInputClass, "h-12 text-base")}
             />
           </label>
 
           <label className="space-y-1.5 sm:col-span-2">
             <span className="text-sm font-medium text-coffee-darkRoast">Observações</span>
-            <textarea
+            <Textarea
               rows={3}
               value={formValues.observacoes}
               onChange={(event) => setFormValues((previous) => ({ ...previous, observacoes: event.target.value }))}
-              className="w-full rounded-xl border border-coffee-cappuccino bg-white px-3 py-3 text-base text-coffee-darkRoast outline-none transition focus:border-coffee-mocha focus:ring-2 focus:ring-coffee-latte"
+              className="text-base"
               placeholder="Digite observações do atendimento"
             />
           </label>

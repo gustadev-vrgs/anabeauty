@@ -3,9 +3,9 @@
 import { FormEvent, useCallback, useEffect, useMemo, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
 import { AutosaveIndicator } from '@/components/ui/autosave-indicator';
 import { useFormDraft } from '@/hooks/use-form-draft';
-import { cn } from '@/utils/cn';
 
 export type ClientFormValues = {
   name: string;
@@ -285,21 +285,13 @@ export function ClientFormModal({ open, mode, initialValues, onClose, onSubmit }
                     autoComplete="street-address"
                   />
                 </div>
-                <div className="space-y-1.5">
-                  <label className="text-sm font-medium text-coffee-darkRoast" htmlFor="observacoes-cliente">
-                    Observações
-                  </label>
-                  <textarea
-                    id="observacoes-cliente"
-                    className={cn(
-                      'min-h-24 w-full rounded-xl border border-border bg-coffee-latte px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground transition-colors',
-                      'focus:border-coffee-espresso focus:outline-none focus:ring-2 focus:ring-coffee-cappuccino/60',
-                    )}
-                    value={values.notes}
-                    onChange={(event) => setValues((previous) => ({ ...previous, notes: event.target.value }))}
-                    placeholder="Digite observações do atendimento"
-                  />
-                </div>
+                <Textarea
+                  id="observacoes-cliente"
+                  label="Observações"
+                  value={values.notes}
+                  onChange={(event) => setValues((previous) => ({ ...previous, notes: event.target.value }))}
+                  placeholder="Digite observações do atendimento"
+                />
               </div>
             ) : null}
           </div>

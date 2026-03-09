@@ -2,6 +2,10 @@
 
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Button } from '@/components/ui/button';
+import { Select } from '@/components/ui/select';
+import { Textarea } from '@/components/ui/textarea';
+import { formFieldInputClass } from '@/components/ui/form-field';
+import { cn } from '@/utils/cn';
 import { AutosaveIndicator } from '@/components/ui/autosave-indicator';
 import { useFormDraft } from '@/hooks/use-form-draft';
 import type { TimeBlockType } from '@/types';
@@ -251,17 +255,17 @@ export function TimeBlockModal({
         <div className="space-y-4">
           <label className="space-y-1.5">
             <span className="text-sm font-medium text-coffee-darkRoast">Tipo de bloqueio</span>
-            <select
+            <Select
               value={values.tipoBloqueio}
               onChange={(event) => handleTypeChange(event.target.value as TimeBlockType)}
-              className="h-12 w-full rounded-xl border border-coffee-cappuccino bg-white px-3 text-base text-coffee-darkRoast outline-none transition focus:border-coffee-mocha focus:ring-2 focus:ring-coffee-latte"
+              className={cn(formFieldInputClass, "h-12 text-base")}
             >
               {blockTypeOptions.map((option) => (
                 <option key={option.value} value={option.value}>
                   {option.label}
                 </option>
               ))}
-            </select>
+            </Select>
             <p className="text-xs text-coffee-espresso">
               {blockTypeOptions.find((item) => item.value === values.tipoBloqueio)?.description}
             </p>
@@ -280,7 +284,7 @@ export function TimeBlockModal({
                     dataFim: previous.tipoBloqueio === 'horario_unico' ? event.target.value : previous.dataFim,
                   }))
                 }
-                className="h-12 w-full rounded-xl border border-coffee-cappuccino bg-white px-3 text-base text-coffee-darkRoast outline-none transition focus:border-coffee-mocha focus:ring-2 focus:ring-coffee-latte"
+                className={cn(formFieldInputClass, "h-12 text-base")}
               />
             </label>
 
@@ -292,7 +296,7 @@ export function TimeBlockModal({
                   value={values.dataFim}
                   min={values.dataInicio}
                   onChange={(event) => setValues((previous) => ({ ...previous, dataFim: event.target.value }))}
-                  className="h-12 w-full rounded-xl border border-coffee-cappuccino bg-white px-3 text-base text-coffee-darkRoast outline-none transition focus:border-coffee-mocha focus:ring-2 focus:ring-coffee-latte"
+                  className={cn(formFieldInputClass, "h-12 text-base")}
                 />
               </label>
             ) : null}
@@ -305,7 +309,7 @@ export function TimeBlockModal({
                     type="time"
                     value={values.horaInicio}
                     onChange={(event) => setValues((previous) => ({ ...previous, horaInicio: event.target.value }))}
-                    className="h-12 w-full rounded-xl border border-coffee-cappuccino bg-white px-3 text-base text-coffee-darkRoast outline-none transition focus:border-coffee-mocha focus:ring-2 focus:ring-coffee-latte"
+                    className={cn(formFieldInputClass, "h-12 text-base")}
                   />
                 </label>
 
@@ -315,7 +319,7 @@ export function TimeBlockModal({
                     type="time"
                     value={values.horaFim}
                     onChange={(event) => setValues((previous) => ({ ...previous, horaFim: event.target.value }))}
-                    className="h-12 w-full rounded-xl border border-coffee-cappuccino bg-white px-3 text-base text-coffee-darkRoast outline-none transition focus:border-coffee-mocha focus:ring-2 focus:ring-coffee-latte"
+                    className={cn(formFieldInputClass, "h-12 text-base")}
                   />
                 </label>
               </>
@@ -324,12 +328,12 @@ export function TimeBlockModal({
 
           <label className="space-y-1.5">
             <span className="text-sm font-medium text-coffee-darkRoast">Observações</span>
-            <textarea
+            <Textarea
               rows={3}
               value={values.observacoes}
               onChange={(event) => setValues((previous) => ({ ...previous, observacoes: event.target.value }))}
               placeholder="Digite observações do atendimento"
-              className="w-full rounded-xl border border-coffee-cappuccino bg-white px-3 py-3 text-base text-coffee-darkRoast outline-none transition focus:border-coffee-mocha focus:ring-2 focus:ring-coffee-latte"
+              className="text-base"
             />
           </label>
         </div>

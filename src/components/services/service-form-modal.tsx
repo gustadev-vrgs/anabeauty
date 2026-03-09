@@ -3,9 +3,9 @@
 import { FormEvent, useCallback, useEffect, useMemo, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
 import { AutosaveIndicator } from '@/components/ui/autosave-indicator';
 import { useFormDraft } from '@/hooks/use-form-draft';
-import { cn } from '@/utils/cn';
 
 export type ServiceFormValues = {
   nome: string;
@@ -244,15 +244,9 @@ export function ServiceFormModal({ open, mode, initialValues, onClose, onSubmit 
             </div>
 
             <div className="space-y-1.5 rounded-2xl border border-coffee-cappuccino/80 bg-white/80 p-4">
-              <label className="text-sm font-medium text-coffee-darkRoast" htmlFor="service-descricao">
-                Descrição
-              </label>
-              <textarea
+              <Textarea
                 id="service-descricao"
-                className={cn(
-                  'min-h-24 w-full rounded-xl border border-border bg-coffee-latte px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground transition-colors',
-                  'focus:border-coffee-espresso focus:outline-none focus:ring-2 focus:ring-coffee-cappuccino/60',
-                )}
+                label="Descrição"
                 value={values.descricao}
                 onChange={(event) => setValues((previous) => ({ ...previous, descricao: event.target.value }))}
                 placeholder="Digite observações do atendimento"
