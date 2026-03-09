@@ -39,7 +39,7 @@ export function TimeGrid({
                 <button
                   type="button"
                   onClick={() => onClickEmptySlot?.(time)}
-                  className="min-h-14 rounded-2xl border border-dashed border-coffee-cappuccino/90 bg-white px-3 py-3 text-left text-sm font-medium text-coffee-hazelnut transition hover:border-coffee-mocha hover:text-coffee-mocha focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-coffee-mocha/30 sm:min-h-14 sm:px-4 sm:text-sm"
+                  className="min-h-14 rounded-2xl border border-dashed border-coffee-cappuccino/90 bg-white px-3 py-3 text-left text-sm font-medium text-coffee-hazelnut transition-colors duration-150 hover:border-coffee-mocha hover:text-coffee-mocha focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-coffee-mocha/30 sm:min-h-14 sm:px-4 sm:text-sm"
                 >
                   Horário livre · toque para criação rápida
                 </button>

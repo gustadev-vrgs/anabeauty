@@ -13,7 +13,7 @@ export function AppointmentCard({ appointment, onClick, className }: Appointment
       type="button"
       onClick={() => onClick?.(appointment)}
       className={cn(
-        'w-full rounded-2xl border border-coffee-mocha/35 bg-coffee-mocha px-3 py-2 text-left text-white shadow-[0_8px_20px_rgba(168,111,71,0.35)] transition hover:bg-coffee-hazelnut focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/80 sm:px-4 sm:py-3',
+        'w-full rounded-2xl border border-coffee-mocha/35 bg-coffee-mocha px-3 py-2 text-left text-white shadow-[0_8px_20px_rgba(168,111,71,0.35)] transition-colors duration-150 hover:bg-coffee-hazelnut focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/80 sm:px-4 sm:py-3',
         className,
       )}
     >

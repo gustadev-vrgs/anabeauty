@@ -48,7 +48,7 @@ export function CalendarView({ selectedDate, onSelectDate }: CalendarViewProps) 
           <button
             type="button"
             onClick={() => handleMonthChange(-1)}
-            className="min-h-11 rounded-full border border-coffee-cappuccino bg-white px-4 py-2 text-sm font-semibold text-coffee-darkRoast transition hover:border-coffee-mocha hover:text-coffee-mocha"
+            className="min-h-11 rounded-full border border-coffee-cappuccino bg-white px-4 py-2 text-sm font-semibold text-coffee-darkRoast transition-colors duration-150 hover:border-coffee-mocha hover:text-coffee-mocha"
             aria-label="Mês anterior"
           >
             ← Anterior
@@ -59,7 +59,7 @@ export function CalendarView({ selectedDate, onSelectDate }: CalendarViewProps) 
           <button
             type="button"
             onClick={() => handleMonthChange(1)}
-            className="min-h-11 rounded-full border border-coffee-cappuccino bg-white px-4 py-2 text-sm font-semibold text-coffee-darkRoast transition hover:border-coffee-mocha hover:text-coffee-mocha"
+            className="min-h-11 rounded-full border border-coffee-cappuccino bg-white px-4 py-2 text-sm font-semibold text-coffee-darkRoast transition-colors duration-150 hover:border-coffee-mocha hover:text-coffee-mocha"
             aria-label="Próximo mês"
           >
             Próximo →
@@ -85,7 +85,7 @@ export function CalendarView({ selectedDate, onSelectDate }: CalendarViewProps) 
               type="button"
               onClick={() => onSelectDate(day)}
               className={cn(
-                'aspect-square min-h-11 rounded-xl border text-sm font-medium transition sm:min-h-12 sm:rounded-2xl sm:text-base',
+                'aspect-square min-h-11 rounded-xl border text-sm font-medium transition-colors duration-150 sm:min-h-12 sm:rounded-2xl sm:text-base',
                 isCurrentMonth
                   ? 'border-coffee-cappuccino/70 bg-white text-coffee-darkRoast hover:border-coffee-mocha'
                   : 'border-coffee-cappuccino/30 bg-coffee-latte/25 text-coffee-hazelnut/80',

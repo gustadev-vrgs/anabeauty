@@ -252,10 +252,10 @@ export function DailyScheduleSection({ selectedDate }: DailyScheduleSectionProps
         </div>
 
         <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
-          <button type="button" onClick={() => { setPrefilledStartTime(undefined); setIsAppointmentModalOpen(true); }} disabled={!canCreateAppointment || isBaseDataLoading} className="min-h-12 rounded-xl border border-coffee-mocha bg-coffee-mocha px-4 text-sm font-semibold text-white transition hover:bg-coffee-hazelnut disabled:cursor-not-allowed disabled:opacity-60">
+          <button type="button" onClick={() => { setPrefilledStartTime(undefined); setIsAppointmentModalOpen(true); }} disabled={!canCreateAppointment || isBaseDataLoading} className="min-h-12 rounded-xl border border-coffee-mocha bg-coffee-mocha px-4 text-sm font-semibold text-white transition-colors duration-150 hover:bg-coffee-hazelnut disabled:cursor-not-allowed disabled:opacity-60">
             Novo agendamento
           </button>
-          <button type="button" onClick={() => setIsBlockModalOpen(true)} className="min-h-12 rounded-xl border border-coffee-cappuccino bg-white px-4 text-sm font-semibold text-coffee-darkRoast transition hover:bg-coffee-latte">
+          <button type="button" onClick={() => setIsBlockModalOpen(true)} className="min-h-12 rounded-xl border border-coffee-cappuccino bg-white px-4 text-sm font-semibold text-coffee-darkRoast transition-colors duration-150 hover:bg-coffee-latte">
             Bloquear horário
           </button>
         </div>
@@ -265,7 +265,7 @@ export function DailyScheduleSection({ selectedDate }: DailyScheduleSectionProps
         <p className="text-xs font-semibold uppercase tracking-[0.18em] text-coffee-espresso">Adicionar horário personalizado</p>
         <div className="mt-2 flex flex-col gap-2 sm:flex-row">
           <input type="time" value={newCustomTime} onChange={(event) => setNewCustomTime(event.target.value)} className="min-h-12 w-full rounded-xl border border-coffee-cappuccino bg-white px-3 text-base font-medium text-coffee-darkRoast focus:border-coffee-mocha focus:outline-none focus:ring-2 focus:ring-coffee-latte sm:max-w-44 sm:text-sm" aria-label="Selecionar horário personalizado" />
-          <button type="button" onClick={handleAddCustomTime} className="min-h-12 rounded-xl border border-coffee-cappuccino bg-white px-4 text-sm font-semibold text-coffee-darkRoast transition hover:bg-coffee-latte">
+          <button type="button" onClick={handleAddCustomTime} className="min-h-12 rounded-xl border border-coffee-cappuccino bg-white px-4 text-sm font-semibold text-coffee-darkRoast transition-colors duration-150 hover:bg-coffee-latte">
             Adicionar horário
           </button>
         </div>

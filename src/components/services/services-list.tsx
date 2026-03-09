@@ -93,8 +93,8 @@ export function ServicesList() {
       {error ? <p className="text-sm text-coffee-espresso">{error}</p> : null}
       {loading ? (
         <div className="space-y-2">
-          <div className="h-12 animate-pulse rounded-xl bg-coffee-cappuccino/40" />
-          <div className="h-12 animate-pulse rounded-xl bg-coffee-cappuccino/30" />
+          <div className="h-12 rounded-xl bg-coffee-cappuccino/35" />
+          <div className="h-12 rounded-xl bg-coffee-cappuccino/25" />
         </div>
       ) : null}
 
