@@ -90,7 +90,7 @@ export function CalendarView({ selectedDate, onSelectDate }: CalendarViewProps) 
                   ? 'border-coffee-cappuccino/70 bg-white text-coffee-darkRoast hover:border-coffee-mocha'
                   : 'border-coffee-cappuccino/30 bg-coffee-latte/25 text-coffee-hazelnut/80',
                 isToday && !isSelected && 'border-coffee-mocha/60 text-coffee-mocha',
-                isSelected && 'border-coffee-mocha/60 bg-coffee-mocha text-white shadow-elevated hover:border-coffee-mocha',
+                isSelected && '!border-coffee-mocha !bg-coffee-mocha !text-coffee-cream shadow-elevated hover:!border-coffee-mocha',
               )}
               aria-pressed={isSelected}
             >
