@@ -5,6 +5,11 @@ import './globals.css';
 export const metadata: Metadata = {
   title: 'Ana Beauty Agenda',
   description: 'Sistema web responsivo de agendamento para profissional da beleza.',
+  icons: {
+    icon: '/images/favicon.png',
+    shortcut: '/images/favicon.png',
+    apple: '/images/favicon.png',
+  },
 };
 
 export const viewport: Viewport = {

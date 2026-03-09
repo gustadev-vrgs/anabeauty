@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { cn } from '@/utils/cn';
@@ -29,6 +30,17 @@ export function AppSidebar() {
   return (
     <>
       <aside className="hidden w-72 shrink-0 rounded-3xl border border-coffee-cappuccino/70 bg-white p-6 shadow-card md:sticky md:top-6 md:block md:max-h-[calc(100vh-3rem)]">
+        <div className="mb-6 flex justify-center">
+          <Image
+            src="/images/logo.jpg"
+            alt="Logo Ana Beauty"
+            width={128}
+            height={128}
+            className="h-auto w-32 rounded-xl object-contain"
+            priority
+          />
+        </div>
+
         <div className="mb-8 space-y-1">
           <p className="text-xs font-semibold uppercase tracking-[0.22em] text-coffee-espresso">Painel</p>
           <h2 className="text-xl font-semibold text-coffee-darkRoast">Ana Beauty</h2>
