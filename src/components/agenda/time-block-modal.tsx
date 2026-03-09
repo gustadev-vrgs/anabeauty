@@ -241,18 +241,22 @@ export function TimeBlockModal({
   const shouldShowHours = values.tipoBloqueio !== 'dia_inteiro';
 
   return (
-    <div className="fixed inset-0 z-50 flex items-end justify-center bg-coffee-blackCoffee/45 px-0 py-0 backdrop-blur-sm sm:px-4 sm:py-8 sm:items-center">
+    <div className="fixed inset-0 z-50 flex items-end justify-center bg-coffee-blackCoffee/55 px-0 py-0 backdrop-blur-[2px] sm:items-center sm:px-4 sm:py-8">
       <button type="button" aria-label="Fechar modal" className="absolute inset-0" onClick={onClose} />
 
-      <section className="relative z-10 max-h-[100dvh] w-full max-w-xl overflow-y-auto overscroll-contain rounded-t-3xl border border-coffee-cappuccino bg-white p-4 pb-[max(1rem,env(safe-area-inset-bottom))] pt-[max(1rem,env(safe-area-inset-top))] shadow-elevated sm:max-h-[88vh] sm:rounded-3xl sm:p-6">
+      <section
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="time-block-modal-title"
+        className="relative z-10 max-h-[100dvh] w-full max-w-xl overflow-y-auto overscroll-contain rounded-t-[1.75rem] border border-coffee-cappuccino/80 bg-white p-5 pb-[max(1rem,env(safe-area-inset-bottom))] pt-[max(1rem,env(safe-area-inset-top))] shadow-[0_24px_60px_rgba(36,27,20,0.2)] sm:max-h-[88vh] sm:rounded-[1.75rem] sm:p-7">
         <header className="mb-5 space-y-1">
           <p className="text-xs font-semibold uppercase tracking-[0.2em] text-coffee-espresso">Agenda</p>
-          <h2 className="text-xl font-semibold text-coffee-darkRoast sm:text-2xl">Novo bloqueio</h2>
+          <h2 id="time-block-modal-title" className="text-xl font-semibold text-coffee-darkRoast sm:text-2xl">Novo bloqueio</h2>
           <p className="text-sm text-coffee-espresso">Informe o período de bloqueio.</p>
           <AutosaveIndicator savedAt={draftSavedAt} restored={wasRestored} />
         </header>
 
-        <div className="space-y-4">
+        <div className="space-y-4 rounded-2xl border border-coffee-cappuccino/80 bg-white p-4 sm:p-5">
           <label className="space-y-1.5">
             <span className="text-sm font-medium text-coffee-darkRoast">Tipo de bloqueio</span>
             <Select
@@ -348,7 +352,7 @@ export function TimeBlockModal({
           <p className="mt-4 rounded-xl border border-red-200 bg-red-50 px-3 py-2 text-sm font-medium text-red-700">{errorMessage}</p>
         ) : null}
 
-        <div className="mt-5 flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
+        <div className="mt-6 flex flex-col-reverse gap-2 border-t border-coffee-cappuccino/70 pt-4 sm:flex-row sm:justify-end">
           <Button variant="secondary" className="h-12" onClick={onClose}>
             Cancelar
           </Button>
