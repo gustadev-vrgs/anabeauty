@@ -45,6 +45,7 @@ body {
   @apply bg-background text-foreground antialiased;
   font-feature-settings: 'kern' 1, 'liga' 1;
   overscroll-behavior-y: none;
+  scrollbar-gutter: stable;
 }
 
 a {
@@ -88,7 +89,7 @@ textarea:-webkit-autofill,
 select:-webkit-autofill {
   -webkit-text-fill-color: #2a1a13;
   -webkit-box-shadow: 0 0 0px 1000px #ffffff inset;
-  transition: background-color 9999s ease-in-out 0s;
+  transition: none;
 }
 
 :focus-visible {

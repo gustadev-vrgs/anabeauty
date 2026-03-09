@@ -44,7 +44,7 @@ export function AppSidebar() {
                 key={link.href}
                 href={link.href}
                 className={cn(
-                  'group flex items-center justify-between rounded-2xl border px-4 py-3 text-sm font-medium transition-all duration-200',
+                  'group flex items-center justify-between rounded-2xl border px-4 py-3 text-sm font-medium transition-colors duration-150',
                   isActive
                     ? 'border-coffee-mocha bg-coffee-mocha text-white shadow-[0_8px_20px_rgba(168,111,71,0.35)]'
                     : 'border-coffee-cappuccino/40 bg-white text-coffee-darkRoast hover:border-coffee-cappuccino hover:bg-coffee-latte/35',

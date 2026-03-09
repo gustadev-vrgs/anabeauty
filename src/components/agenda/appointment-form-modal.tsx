@@ -242,7 +242,7 @@ export function AppointmentFormModal({
               <button
                 type="button"
                 onClick={onQuickCreateClient}
-                className="min-h-11 rounded-lg border border-coffee-cappuccino bg-white px-3 py-2 text-sm font-semibold text-coffee-darkRoast transition hover:border-coffee-mocha hover:text-coffee-mocha"
+                className="min-h-11 rounded-lg border border-coffee-cappuccino bg-white px-3 py-2 text-sm font-semibold text-coffee-darkRoast transition-colors duration-150 hover:border-coffee-mocha hover:text-coffee-mocha"
               >
                 Novo cliente
               </button>
