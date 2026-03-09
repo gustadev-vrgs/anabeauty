@@ -1,3 +1,4 @@
+import { formatPhone, getPhoneDigits, isValidPhoneFormat, normalizeInstagram } from '@/lib/clients/fields';
 import { Client, Service } from '@/types';
 
 export type ValidationResult<T> = { success: true; data: T } | { success: false; message: string };
@@ -11,13 +12,13 @@ function normalizeString(value: string) {
 }
 
 export function sanitizeClientPayload(payload: Omit<Client, 'id' | 'createdAt'>): ValidationResult<Omit<Client, 'id' | 'createdAt'>> {
-  const normalizedPhone = payload.phone.replace(/\D/g, '');
+  const formattedPhone = formatPhone(payload.phone);
 
   const data: Omit<Client, 'id' | 'createdAt'> = {
     name: normalizeString(payload.name),
-    phone: normalizedPhone,
+    phone: formattedPhone,
     email: payload.email ? normalizeString(payload.email).toLowerCase() : undefined,
-    instagram: payload.instagram ? normalizeString(payload.instagram) : undefined,
+    instagram: payload.instagram ? normalizeInstagram(payload.instagram) : undefined,
     notes: payload.notes ? payload.notes.trim() : undefined,
     address: payload.address ? normalizeString(payload.address) : undefined,
     birthDate: payload.birthDate || undefined,
@@ -27,8 +28,8 @@ export function sanitizeClientPayload(payload: Omit<Client, 'id' | 'createdAt'>)
     return { success: false, message: 'Nome da cliente é obrigatório.' };
   }
 
-  if (data.phone.length < 10) {
-    return { success: false, message: 'Telefone inválido. Informe DDD + número.' };
+  if (!isValidPhoneFormat(data.phone) || getPhoneDigits(data.phone).length !== 11) {
+    return { success: false, message: 'Informe um telefone válido no formato (99) 99999-9999' };
   }
 
   if (data.email && !isValidEmail(data.email)) {
