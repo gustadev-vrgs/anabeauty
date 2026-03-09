@@ -6,6 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { AutosaveIndicator } from '@/components/ui/autosave-indicator';
 import { useFormDraft } from '@/hooks/use-form-draft';
+import { formatPhone, isValidPhoneFormat, normalizeInstagram } from '@/lib/clients/fields';
 
 export type ClientFormValues = {
   name: string;
@@ -43,9 +44,9 @@ const initialFormValues: ClientFormValues = {
 function sanitizeValues(initialValues?: Partial<ClientFormValues>): ClientFormValues {
   return {
     name: initialValues?.name ?? '',
-    phone: initialValues?.phone ?? '',
+    phone: formatPhone(initialValues?.phone ?? ''),
     email: initialValues?.email ?? '',
-    instagram: initialValues?.instagram ?? '',
+    instagram: normalizeInstagram(initialValues?.instagram ?? ''),
     notes: initialValues?.notes ?? '',
     address: initialValues?.address ?? '',
     birthDate: initialValues?.birthDate ?? '',
@@ -126,16 +127,14 @@ export function ClientFormModal({ open, mode, initialValues, onClose, onSubmit }
     event.preventDefault();
 
     const nextErrors: Partial<Record<keyof ClientFormValues, string>> = {};
-    const normalizedPhone = values.phone.replace(/\D/g, '');
-
     if (!values.name.trim()) {
       nextErrors.name = 'Informe o nome da cliente.';
     }
 
     if (!values.phone.trim()) {
       nextErrors.phone = 'Informe o telefone da cliente.';
-    } else if (normalizedPhone.length < 10) {
-      nextErrors.phone = 'Informe um telefone válido com DDD.';
+    } else if (!isValidPhoneFormat(values.phone)) {
+      nextErrors.phone = 'Informe um telefone válido no formato (99) 99999-9999';
     }
 
     if (values.email.trim() && !validateEmail(values.email.trim())) {
@@ -153,7 +152,7 @@ export function ClientFormModal({ open, mode, initialValues, onClose, onSubmit }
       name: values.name.trim(),
       phone: values.phone.trim(),
       email: values.email.trim(),
-      instagram: values.instagram.trim(),
+      instagram: normalizeInstagram(values.instagram),
       notes: values.notes.trim(),
       address: values.address.trim(),
       birthDate: values.birthDate,
@@ -210,11 +209,17 @@ export function ClientFormModal({ open, mode, initialValues, onClose, onSubmit }
               <Input
                 label="Telefone *"
                 value={values.phone}
-                onChange={(event) => setValues((previous) => ({ ...previous, phone: event.target.value }))}
+                onChange={(event) =>
+                  setValues((previous) => ({
+                    ...previous,
+                    phone: formatPhone(event.target.value),
+                  }))
+                }
                 error={errors.phone}
                 placeholder="(00) 00000-0000"
                 autoComplete="tel"
-                inputMode="tel"
+                inputMode="numeric"
+                maxLength={15}
                 required
               />
             </div>
@@ -249,7 +254,12 @@ export function ClientFormModal({ open, mode, initialValues, onClose, onSubmit }
                 <Input
                   label="Instagram"
                   value={values.instagram}
-                  onChange={(event) => setValues((previous) => ({ ...previous, instagram: event.target.value }))}
+                  onChange={(event) =>
+                    setValues((previous) => ({
+                      ...previous,
+                      instagram: normalizeInstagram(event.target.value),
+                    }))
+                  }
                   placeholder="@cliente"
                   autoCapitalize="none"
                 />
