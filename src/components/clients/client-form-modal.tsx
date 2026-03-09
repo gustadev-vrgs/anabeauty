@@ -171,14 +171,14 @@ export function ClientFormModal({ open, mode, initialValues, onClose, onSubmit }
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-end justify-center bg-coffee-blackCoffee/40 px-0 py-0 backdrop-blur-sm sm:px-4 sm:py-8 sm:items-center">
+    <div className="fixed inset-0 z-50 flex items-end justify-center bg-coffee-blackCoffee/55 px-0 py-0 backdrop-blur-[2px] sm:items-center sm:px-4 sm:py-8">
       <button type="button" aria-label="Fechar modal" className="absolute inset-0" onClick={onClose} />
 
       <section
         role="dialog"
         aria-modal="true"
         aria-labelledby="client-form-modal-title"
-        className="relative z-10 max-h-[100dvh] w-full max-w-2xl overflow-y-auto overscroll-contain rounded-t-3xl border border-coffee-cappuccino bg-coffee-cream p-4 pb-[max(1rem,env(safe-area-inset-bottom))] pt-[max(1rem,env(safe-area-inset-top))] shadow-elevated sm:max-h-[88vh] sm:rounded-3xl sm:p-6"
+        className="relative z-10 max-h-[100dvh] w-full max-w-2xl overflow-y-auto overscroll-contain rounded-t-[1.75rem] border border-coffee-cappuccino/80 bg-white p-5 pb-[max(1rem,env(safe-area-inset-bottom))] pt-[max(1rem,env(safe-area-inset-top))] shadow-[0_24px_60px_rgba(36,27,20,0.2)] sm:max-h-[88vh] sm:rounded-[1.75rem] sm:p-7"
       >
         <header className="mb-5 space-y-1">
           <p className="text-xs font-semibold uppercase tracking-[0.2em] text-coffee-espresso">Clientes</p>
@@ -191,8 +191,8 @@ export function ClientFormModal({ open, mode, initialValues, onClose, onSubmit }
           <AutosaveIndicator savedAt={draftSavedAt} restored={wasRestored} />
         </header>
 
-        <form className="space-y-4" onSubmit={handleSubmit} noValidate>
-          <div className="rounded-2xl border border-coffee-cappuccino/80 bg-white/80 p-4">
+        <form className="space-y-5" onSubmit={handleSubmit} noValidate>
+          <div className="rounded-2xl border border-coffee-cappuccino/80 bg-white p-4 sm:p-5">
             <p className="mb-3 text-xs font-semibold uppercase tracking-[0.16em] text-coffee-espresso">Obrigatório</p>
             <div className="grid gap-3 sm:grid-cols-2">
               <Input
@@ -221,7 +221,7 @@ export function ClientFormModal({ open, mode, initialValues, onClose, onSubmit }
             <button
               type="button"
               onClick={() => setShowContactExtras((previous) => !previous)}
-              className="flex w-full items-center justify-between rounded-2xl border border-coffee-cappuccino bg-white/80 px-4 py-3 text-left"
+              className="flex w-full items-center justify-between rounded-2xl border border-coffee-cappuccino/80 bg-white px-4 py-3 text-left"
               aria-expanded={showContactExtras}
             >
               <span>
@@ -232,7 +232,7 @@ export function ClientFormModal({ open, mode, initialValues, onClose, onSubmit }
             </button>
 
             {showContactExtras ? (
-              <div className="grid gap-3 rounded-2xl border border-coffee-cappuccino/80 bg-white/70 p-4 sm:grid-cols-2">
+              <div className="grid gap-3 rounded-2xl border border-coffee-cappuccino/80 bg-white p-4 sm:grid-cols-2">
                 <Input
                   label="Email"
                   type="email"
@@ -258,7 +258,7 @@ export function ClientFormModal({ open, mode, initialValues, onClose, onSubmit }
             <button
               type="button"
               onClick={() => setShowProfileExtras((previous) => !previous)}
-              className="flex w-full items-center justify-between rounded-2xl border border-coffee-cappuccino bg-white/80 px-4 py-3 text-left"
+              className="flex w-full items-center justify-between rounded-2xl border border-coffee-cappuccino/80 bg-white px-4 py-3 text-left"
               aria-expanded={showProfileExtras}
             >
               <span>
@@ -269,7 +269,7 @@ export function ClientFormModal({ open, mode, initialValues, onClose, onSubmit }
             </button>
 
             {showProfileExtras ? (
-              <div className="space-y-3 rounded-2xl border border-coffee-cappuccino/80 bg-white/70 p-4">
+              <div className="space-y-3 rounded-2xl border border-coffee-cappuccino/80 bg-white p-4">
                 <div className="grid gap-3 sm:grid-cols-2">
                   <Input
                     label="Data de nascimento"

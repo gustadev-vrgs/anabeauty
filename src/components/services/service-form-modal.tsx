@@ -178,16 +178,16 @@ export function ServiceFormModal({ open, mode, initialValues, onClose, onSubmit 
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-end justify-center bg-coffee-blackCoffee/45 p-0 backdrop-blur-sm sm:items-center sm:p-6">
+    <div className="fixed inset-0 z-50 flex items-end justify-center bg-coffee-blackCoffee/55 p-0 backdrop-blur-[2px] sm:items-center sm:p-6">
       <button type="button" aria-label="Fechar modal" className="absolute inset-0" onClick={onClose} />
 
       <section
         role="dialog"
         aria-modal="true"
         aria-labelledby="service-form-modal-title"
-        className="relative z-10 flex max-h-[100dvh] w-full max-w-3xl flex-col overflow-hidden rounded-t-3xl border border-coffee-cappuccino bg-coffee-cream shadow-elevated sm:max-h-[96dvh] sm:rounded-3xl"
+        className="relative z-10 flex max-h-[100dvh] w-full max-w-3xl flex-col overflow-hidden rounded-t-[1.75rem] border border-coffee-cappuccino/80 bg-white shadow-[0_28px_70px_rgba(36,27,20,0.22)] sm:max-h-[96dvh] sm:rounded-[1.75rem]"
       >
-        <header className="border-b border-coffee-cappuccino/75 px-4 pb-4 pt-5 sm:px-7 sm:pt-6">
+        <header className="border-b border-coffee-cappuccino/70 px-4 pb-4 pt-5 sm:px-7 sm:pt-6">
           <p className="text-xs font-semibold uppercase tracking-[0.2em] text-coffee-espresso">Serviços</p>
           <h2 id="service-form-modal-title" className="mt-1 text-xl font-semibold text-coffee-darkRoast sm:text-2xl">
             {title}
@@ -198,7 +198,7 @@ export function ServiceFormModal({ open, mode, initialValues, onClose, onSubmit 
 
         <form className="flex-1 overflow-y-auto px-4 pb-6 pt-4 sm:px-7" onSubmit={handleSubmit} noValidate>
           <div className="space-y-4">
-            <div className="grid gap-3 rounded-2xl border border-coffee-cappuccino/80 bg-white/80 p-4 sm:grid-cols-2 sm:gap-4">
+            <div className="grid gap-4 rounded-2xl border border-coffee-cappuccino/80 bg-white p-4 sm:grid-cols-2 sm:p-5">
               <Input
                 label="Nome *"
                 value={values.nome}
@@ -243,7 +243,7 @@ export function ServiceFormModal({ open, mode, initialValues, onClose, onSubmit 
               />
             </div>
 
-            <div className="space-y-1.5 rounded-2xl border border-coffee-cappuccino/80 bg-white/80 p-4">
+            <div className="space-y-1.5 rounded-2xl border border-coffee-cappuccino/80 bg-white p-4 sm:p-5">
               <Textarea
                 id="service-descricao"
                 label="Descrição"
@@ -253,7 +253,7 @@ export function ServiceFormModal({ open, mode, initialValues, onClose, onSubmit 
               />
             </div>
 
-            <div className="grid gap-3 rounded-2xl border border-coffee-cappuccino/80 bg-white/80 p-4 sm:grid-cols-[1fr_auto] sm:items-end">
+            <div className="grid gap-3 rounded-2xl border border-coffee-cappuccino/80 bg-white p-4 sm:grid-cols-[1fr_auto] sm:items-end sm:p-5">
               <Input
                 label="Imagem (opcional)"
                 type="url"
@@ -263,7 +263,7 @@ export function ServiceFormModal({ open, mode, initialValues, onClose, onSubmit 
                 placeholder="https://..."
                 
               />
-              <label className="flex h-11 items-center gap-2 rounded-xl border border-coffee-cappuccino bg-coffee-latte px-3 text-sm font-medium text-coffee-darkRoast">
+              <label className="flex h-11 items-center gap-2 rounded-xl border border-coffee-cappuccino bg-white px-3 text-sm font-medium text-coffee-darkRoast">
                 <input
                   type="checkbox"
                   checked={values.availableForBooking}
@@ -282,7 +282,7 @@ export function ServiceFormModal({ open, mode, initialValues, onClose, onSubmit 
 
           {submitError ? <p className="mt-4 text-sm text-red-700">{submitError}</p> : null}
 
-          <div className="sticky bottom-0 mt-5 flex flex-col-reverse gap-2 border-t border-coffee-cappuccino/70 bg-coffee-cream/95 pb-[max(0.25rem,env(safe-area-inset-bottom))] pt-4 backdrop-blur sm:flex-row sm:justify-end">
+          <div className="sticky bottom-0 mt-5 flex flex-col-reverse gap-2 border-t border-coffee-cappuccino/70 bg-white pb-[max(0.25rem,env(safe-area-inset-bottom))] pt-4 backdrop-blur sm:flex-row sm:justify-end">
             <Button type="button" variant="secondary" onClick={onClose} className="w-full sm:w-auto">
               Cancelar
             </Button>
