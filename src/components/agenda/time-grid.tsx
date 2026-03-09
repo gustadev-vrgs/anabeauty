@@ -22,7 +22,7 @@ export function TimeGrid({
 
   return (
     <div className="max-h-[60vh] overflow-y-auto overscroll-contain pr-1.5 sm:max-h-[64vh]">
-      <ul className="space-y-3 pb-2">
+      <ul className="space-y-3 pb-2" aria-label="Grade de horários">
         {slots.map((time) => {
           const appointment = appointmentsByStart.get(time);
           const block = blocksByStart.get(time);
@@ -39,9 +39,9 @@ export function TimeGrid({
                 <button
                   type="button"
                   onClick={() => onClickEmptySlot?.(time)}
-                  className="min-h-14 rounded-2xl border border-dashed border-coffee-cappuccino/90 bg-white px-3 py-3 text-left text-sm font-medium text-coffee-hazelnut transition-colors duration-150 hover:border-coffee-mocha hover:text-coffee-mocha focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-coffee-mocha/30 sm:min-h-14 sm:px-4 sm:text-sm"
+                  className="min-h-16 rounded-2xl border border-dashed border-coffee-cappuccino/90 bg-white px-3 py-3 text-left text-sm font-medium text-coffee-hazelnut transition-colors duration-150 hover:border-coffee-mocha/70 hover:bg-coffee-latte/20 hover:text-coffee-mocha focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-coffee-mocha/30 active:border-coffee-mocha active:bg-coffee-latte/30 sm:min-h-16 sm:px-4 sm:text-sm"
                 >
-                  Horário livre · toque para criação rápida
+Livre · toque para agendar
                 </button>
               )}
             </li>
