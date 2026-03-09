@@ -1,6 +1,7 @@
 'use client';
 
 import { FormEvent, useEffect, useMemo, useState } from 'react';
+import Image from 'next/image';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { authenticateUser } from '@/services/auth.service';
 import { Button, Card, CardContent, CardDescription, CardHeader, CardTitle, Input } from '@/components/ui';
@@ -57,8 +58,20 @@ export function LoginForm() {
 
   return (
     <Card className="w-full max-w-md border-coffee-macchiato/80 bg-coffee-latte/95 p-5 shadow-elevated sm:p-8">
-      <CardHeader className="mb-5 space-y-2 sm:mb-6">
-        <p className="text-xs uppercase tracking-[0.2em] text-coffee-espresso">Ana Beauty Agenda</p>
+      <CardHeader className="mb-5 space-y-3 sm:mb-6">
+        <div className="flex items-center gap-3">
+          <div className="flex h-11 w-11 items-center justify-center overflow-hidden rounded-xl border border-coffee-cappuccino/80 bg-white/70">
+            <Image
+              src="/images/favicon.png"
+              alt="Logo Ana Beauty"
+              width={44}
+              height={44}
+              priority
+              className="h-full w-full object-contain"
+            />
+          </div>
+          <p className="text-xs uppercase tracking-[0.2em] text-coffee-espresso">Ana Beauty Agenda</p>
+        </div>
         <CardTitle className="text-[1.75rem] leading-tight sm:text-3xl">Entrar no sistema</CardTitle>
         <CardDescription>Acesse sua agenda para gerenciar atendimentos.</CardDescription>
       </CardHeader>
