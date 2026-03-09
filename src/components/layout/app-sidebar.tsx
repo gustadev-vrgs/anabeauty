@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { cn } from '@/utils/cn';
@@ -29,10 +30,22 @@ export function AppSidebar() {
   return (
     <>
       <aside className="hidden w-72 shrink-0 rounded-3xl border border-coffee-cappuccino/70 bg-white p-6 shadow-card md:sticky md:top-6 md:block md:max-h-[calc(100vh-3rem)]">
-        <div className="mb-8 space-y-1">
-          <p className="text-xs font-semibold uppercase tracking-[0.22em] text-coffee-espresso">Painel</p>
-          <h2 className="text-xl font-semibold text-coffee-darkRoast">Ana Beauty</h2>
-          <p className="text-sm text-coffee-espresso">Gestão de agendamentos</p>
+        <div className="mb-8 space-y-3">
+          <div className="flex h-14 w-14 items-center justify-center overflow-hidden rounded-2xl border border-coffee-cappuccino/80 bg-coffee-latte/40">
+            <Image
+              src="/images/favicon.png"
+              alt="Logo Ana Beauty"
+              width={56}
+              height={56}
+              priority
+              className="h-full w-full object-contain"
+            />
+          </div>
+          <div className="space-y-1">
+            <p className="text-xs font-semibold uppercase tracking-[0.22em] text-coffee-espresso">Painel</p>
+            <h2 className="text-xl font-semibold text-coffee-darkRoast">Ana Beauty</h2>
+            <p className="text-sm text-coffee-espresso">Gestão de agendamentos</p>
+          </div>
         </div>
 
         <nav className="space-y-2" aria-label="Navegação principal">
