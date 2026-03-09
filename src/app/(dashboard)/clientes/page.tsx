@@ -6,7 +6,7 @@ export default function ClientesPage() {
     <>
       <PageTitle
         title="Clientes"
-        subtitle="Cadastre, busque e gerencie sua base de clientes em poucos cliques."
+        subtitle="Lista de clientes"
       />
       <ClientsList />
     </>

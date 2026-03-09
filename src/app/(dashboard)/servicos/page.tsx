@@ -5,8 +5,8 @@ export default function ServicosPage() {
   return (
     <>
       <PageTitle
-        title="Serviços e Procedimentos"
-        subtitle="Gerencie o catálogo com busca, disponibilidade para agendamento e edição rápida."
+        title="Serviços"
+        subtitle="Serviços disponíveis"
       />
       <ServicesList />
     </>

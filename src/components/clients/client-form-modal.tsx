@@ -181,12 +181,12 @@ export function ClientFormModal({ open, mode, initialValues, onClose, onSubmit }
         className="relative z-10 max-h-[100dvh] w-full max-w-2xl overflow-y-auto overscroll-contain rounded-t-3xl border border-coffee-cappuccino bg-coffee-cream p-4 pb-[max(1rem,env(safe-area-inset-bottom))] pt-[max(1rem,env(safe-area-inset-top))] shadow-elevated sm:max-h-[88vh] sm:rounded-3xl sm:p-6"
       >
         <header className="mb-5 space-y-1">
-          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-coffee-espresso">Cadastro rápido</p>
+          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-coffee-espresso">Clientes</p>
           <h2 id="client-form-modal-title" className="text-xl font-semibold text-coffee-darkRoast sm:text-2xl">
             {title}
           </h2>
           <p className="text-sm text-coffee-espresso">
-            Comece com o essencial e expanda os campos extras apenas quando necessário.
+            Preencha os dados da cliente.
           </p>
           <AutosaveIndicator savedAt={draftSavedAt} restored={wasRestored} />
         </header>
@@ -200,7 +200,7 @@ export function ClientFormModal({ open, mode, initialValues, onClose, onSubmit }
                 value={values.name}
                 onChange={(event) => setValues((previous) => ({ ...previous, name: event.target.value }))}
                 error={errors.name}
-                placeholder="Nome completo"
+                placeholder="Ex: Maria Silva"
                 autoComplete="name"
                 required
               />
@@ -209,7 +209,7 @@ export function ClientFormModal({ open, mode, initialValues, onClose, onSubmit }
                 value={values.phone}
                 onChange={(event) => setValues((previous) => ({ ...previous, phone: event.target.value }))}
                 error={errors.phone}
-                placeholder="(11) 99999-9999"
+                placeholder="(00) 00000-0000"
                 autoComplete="tel"
                 inputMode="tel"
                 required
@@ -247,7 +247,7 @@ export function ClientFormModal({ open, mode, initialValues, onClose, onSubmit }
                   label="Instagram"
                   value={values.instagram}
                   onChange={(event) => setValues((previous) => ({ ...previous, instagram: event.target.value }))}
-                  placeholder="@usuario"
+                  placeholder="@cliente"
                   autoCapitalize="none"
                 />
               </div>
@@ -297,7 +297,7 @@ export function ClientFormModal({ open, mode, initialValues, onClose, onSubmit }
                     )}
                     value={values.notes}
                     onChange={(event) => setValues((previous) => ({ ...previous, notes: event.target.value }))}
-                    placeholder="Preferências, restrições ou observações importantes"
+                    placeholder="Digite observações do atendimento"
                   />
                 </div>
               </div>
@@ -305,7 +305,7 @@ export function ClientFormModal({ open, mode, initialValues, onClose, onSubmit }
           </div>
 
           {!hasAnyOptionalValue ? (
-            <p className="text-xs text-coffee-espresso">Dica: você pode salvar só com nome e telefone.</p>
+            <p className="text-xs text-coffee-espresso">Preencha nome e telefone para continuar.</p>
           ) : null}
 
           {submitError ? <p className="text-sm text-red-700">{submitError}</p> : null}
@@ -319,7 +319,7 @@ export function ClientFormModal({ open, mode, initialValues, onClose, onSubmit }
               disabled={isSaving}
               className="w-full bg-coffee-mocha text-coffee-cream hover:bg-coffee-espresso sm:w-auto"
             >
-              {isSaving ? 'Salvando...' : 'Salvar Cliente'}
+              {isSaving ? 'Salvando...' : 'Salvar'}
             </Button>
           </div>
         </form>
