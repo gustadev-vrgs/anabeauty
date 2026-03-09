@@ -47,7 +47,6 @@ export function ServicesList() {
       category: values.categoria,
       description: values.descricao || undefined,
       availableForBooking: values.availableForBooking,
-      imageUrl: values.imageUrl || undefined,
     });
 
     if (!validation.success) {
@@ -139,7 +138,6 @@ export function ServicesList() {
                 duracaoMinutos: String(editingService.durationMinutes),
                 descricao: editingService.description ?? '',
                 availableForBooking: editingService.availableForBooking,
-                imageUrl: editingService.imageUrl ?? '',
               }
             : undefined
         }

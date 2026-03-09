@@ -27,6 +27,9 @@ type ClientFormModalProps = {
   onSubmit: (values: ClientFormValues) => Promise<void>;
 };
 
+const DEFAULT_TEXT_MAX_LENGTH = 255;
+const TEXTAREA_MAX_LENGTH = 1000;
+
 const initialFormValues: ClientFormValues = {
   name: '',
   phone: '',
@@ -283,6 +286,7 @@ export function ClientFormModal({ open, mode, initialValues, onClose, onSubmit }
                     onChange={(event) => setValues((previous) => ({ ...previous, address: event.target.value }))}
                     placeholder="Rua, número, cidade"
                     autoComplete="street-address"
+                    maxLength={DEFAULT_TEXT_MAX_LENGTH}
                   />
                 </div>
                 <Textarea
@@ -291,6 +295,7 @@ export function ClientFormModal({ open, mode, initialValues, onClose, onSubmit }
                   value={values.notes}
                   onChange={(event) => setValues((previous) => ({ ...previous, notes: event.target.value }))}
                   placeholder="Digite observações do atendimento"
+                  maxLength={TEXTAREA_MAX_LENGTH}
                 />
               </div>
             ) : null}

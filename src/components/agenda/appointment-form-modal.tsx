@@ -319,6 +319,7 @@ export function AppointmentFormModal({
               onChange={(event) => setFormValues((previous) => ({ ...previous, observacoes: event.target.value }))}
               className="text-base"
               placeholder="Digite observações do atendimento"
+              maxLength={1000}
             />
           </label>
         </div>
