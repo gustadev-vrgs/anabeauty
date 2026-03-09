@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useState } from 'react';
 
 const collectionCache = new Map<string, unknown[]>();
+const EMPTY_FALLBACK_DATA: never[] = [];
 
 type UseCachedCollectionParams<T> = {
   cacheKey: string;
@@ -10,7 +11,7 @@ type UseCachedCollectionParams<T> = {
   fallbackData?: T[];
 };
 
-export function useCachedCollection<T>({ cacheKey, loader, fallbackData = [] }: UseCachedCollectionParams<T>) {
+export function useCachedCollection<T>({ cacheKey, loader, fallbackData = EMPTY_FALLBACK_DATA as T[] }: UseCachedCollectionParams<T>) {
   const [data, setData] = useState<T[]>(() => (collectionCache.get(cacheKey) as T[] | undefined) ?? fallbackData);
   const [loading, setLoading] = useState(!collectionCache.has(cacheKey));
   const [error, setError] = useState<string | null>(null);
