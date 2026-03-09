@@ -14,7 +14,6 @@ export type ServiceFormValues = {
   categoria: string;
   descricao: string;
   availableForBooking: boolean;
-  imageUrl?: string;
 };
 
 export type ServiceFormModalMode = 'create' | 'edit';
@@ -34,8 +33,10 @@ const initialFormValues: ServiceFormValues = {
   categoria: '',
   descricao: '',
   availableForBooking: true,
-  imageUrl: '',
 };
+
+const DEFAULT_TEXT_MAX_LENGTH = 255;
+const TEXTAREA_MAX_LENGTH = 1000;
 
 function sanitizeValues(initialValues?: Partial<ServiceFormValues>): ServiceFormValues {
   return {
@@ -45,17 +46,7 @@ function sanitizeValues(initialValues?: Partial<ServiceFormValues>): ServiceForm
     categoria: initialValues?.categoria ?? '',
     descricao: initialValues?.descricao ?? '',
     availableForBooking: initialValues?.availableForBooking ?? true,
-    imageUrl: initialValues?.imageUrl ?? '',
   };
-}
-
-function isValidUrl(url: string) {
-  try {
-    const parsed = new URL(url);
-    return ['http:', 'https:'].includes(parsed.protocol);
-  } catch {
-    return false;
-  }
 }
 
 export function ServiceFormModal({ open, mode, initialValues, onClose, onSubmit }: ServiceFormModalProps) {
@@ -142,10 +133,6 @@ export function ServiceFormModal({ open, mode, initialValues, onClose, onSubmit 
       nextErrors.duracaoMinutos = 'Informe uma duração válida.';
     }
 
-    if (values.imageUrl?.trim() && !isValidUrl(values.imageUrl.trim())) {
-      nextErrors.imageUrl = 'Informe uma URL válida iniciando com http:// ou https://.';
-    }
-
     if (Object.keys(nextErrors).length) {
       setErrors(nextErrors);
       return;
@@ -160,7 +147,6 @@ export function ServiceFormModal({ open, mode, initialValues, onClose, onSubmit 
       duracaoMinutos: String(parsedDuracao),
       descricao: values.descricao.trim(),
       availableForBooking: values.availableForBooking,
-      imageUrl: values.imageUrl?.trim() ?? '',
     };
 
     setIsSaving(true);
@@ -215,20 +201,32 @@ export function ServiceFormModal({ open, mode, initialValues, onClose, onSubmit 
                 error={errors.categoria}
                 placeholder="Ex: Sobrancelha"
                 autoComplete="off"
+                maxLength={DEFAULT_TEXT_MAX_LENGTH}
                 required
               />
-              <Input
-                label="Valor (R$) *"
-                type="number"
-                inputMode="decimal"
-                min="0"
-                step="0.01"
-                value={values.valor}
-                onChange={(event) => setValues((previous) => ({ ...previous, valor: event.target.value }))}
-                error={errors.valor}
-                placeholder="R$ 0,00"
-                required
-              />
+              <div className="space-y-1.5">
+                <label htmlFor="service-valor" className="text-sm font-medium text-coffee-darkRoast">
+                  Valor *
+                </label>
+                <div className="relative">
+                  <span className="pointer-events-none absolute inset-y-0 left-3 flex items-center text-sm font-semibold text-coffee-darkRoast">
+                    R$
+                  </span>
+                  <Input
+                    id="service-valor"
+                    type="number"
+                    inputMode="decimal"
+                    min="0"
+                    step="0.01"
+                    value={values.valor}
+                    onChange={(event) => setValues((previous) => ({ ...previous, valor: event.target.value }))}
+                    error={errors.valor}
+                    placeholder="0,00"
+                    className="pl-12"
+                    required
+                  />
+                </div>
+              </div>
               <Input
                 label="Duração (minutos) *"
                 type="number"
@@ -250,19 +248,11 @@ export function ServiceFormModal({ open, mode, initialValues, onClose, onSubmit 
                 value={values.descricao}
                 onChange={(event) => setValues((previous) => ({ ...previous, descricao: event.target.value }))}
                 placeholder="Digite observações do atendimento"
+                maxLength={TEXTAREA_MAX_LENGTH}
               />
             </div>
 
-            <div className="grid gap-3 rounded-2xl border border-coffee-cappuccino/80 bg-white p-4 sm:grid-cols-[1fr_auto] sm:items-end sm:p-5">
-              <Input
-                label="Imagem (opcional)"
-                type="url"
-                value={values.imageUrl}
-                onChange={(event) => setValues((previous) => ({ ...previous, imageUrl: event.target.value }))}
-                error={errors.imageUrl}
-                placeholder="https://..."
-                
-              />
+            <div className="grid gap-3 rounded-2xl border border-coffee-cappuccino/80 bg-white p-4 sm:p-5">
               <label className="flex h-11 items-center gap-2 rounded-xl border border-coffee-cappuccino bg-white px-3 text-sm font-medium text-coffee-darkRoast">
                 <input
                   type="checkbox"

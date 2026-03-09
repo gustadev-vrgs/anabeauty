@@ -338,6 +338,7 @@ export function TimeBlockModal({
               onChange={(event) => setValues((previous) => ({ ...previous, observacoes: event.target.value }))}
               placeholder="Digite observações do atendimento"
               className="text-base"
+              maxLength={1000}
             />
           </label>
         </div>
