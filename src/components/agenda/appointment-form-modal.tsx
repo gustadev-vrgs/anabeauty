@@ -191,7 +191,7 @@ export function AppointmentFormModal({
         <header className="mb-5 space-y-1">
           <p className="text-xs font-semibold uppercase tracking-[0.2em] text-coffee-espresso">Agenda</p>
           <h2 className="text-xl font-semibold text-coffee-darkRoast sm:text-2xl">Novo agendamento</h2>
-          <p className="text-sm text-coffee-espresso">Preencha os dados abaixo para reservar o horário.</p>
+          <p className="text-sm text-coffee-espresso">Preencha os dados do agendamento.</p>
           <AutosaveIndicator savedAt={draftSavedAt} restored={wasRestored} />
         </header>
 
@@ -240,7 +240,7 @@ export function AppointmentFormModal({
                 onClick={onQuickCreateClient}
                 className="min-h-11 rounded-lg border border-coffee-cappuccino bg-white px-3 py-2 text-sm font-semibold text-coffee-darkRoast transition hover:border-coffee-mocha hover:text-coffee-mocha"
               >
-                + Nova cliente
+                Novo cliente
               </button>
             </div>
 
@@ -291,7 +291,7 @@ export function AppointmentFormModal({
               value={formValues.observacoes}
               onChange={(event) => setFormValues((previous) => ({ ...previous, observacoes: event.target.value }))}
               className="w-full rounded-xl border border-coffee-cappuccino bg-white px-3 py-3 text-base text-coffee-darkRoast outline-none transition focus:border-coffee-mocha focus:ring-2 focus:ring-coffee-latte"
-              placeholder="Observações do atendimento"
+              placeholder="Digite observações do atendimento"
             />
           </label>
         </div>
@@ -319,7 +319,7 @@ export function AppointmentFormModal({
             Cancelar
           </Button>
           <Button disabled={isSaving} className="h-12 bg-coffee-mocha text-white hover:bg-coffee-hazelnut" onClick={handleSchedule}>
-            {isSaving ? 'Salvando...' : 'Agendar'}
+            {isSaving ? 'Salvando...' : 'Salvar'}
           </Button>
         </div>
       </section>

@@ -113,7 +113,7 @@ export function ServiceFormModal({ open, mode, initialValues, onClose, onSubmit 
     return null;
   }
 
-  const title = mode === 'edit' ? 'Editar serviço/procedimento' : 'Novo serviço/procedimento';
+  const title = mode === 'edit' ? 'Editar serviço' : 'Novo serviço';
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -188,11 +188,11 @@ export function ServiceFormModal({ open, mode, initialValues, onClose, onSubmit 
         className="relative z-10 flex max-h-[100dvh] w-full max-w-3xl flex-col overflow-hidden rounded-t-3xl border border-coffee-cappuccino bg-coffee-cream shadow-elevated sm:max-h-[96dvh] sm:rounded-3xl"
       >
         <header className="border-b border-coffee-cappuccino/75 px-4 pb-4 pt-5 sm:px-7 sm:pt-6">
-          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-coffee-espresso">Cadastro de procedimentos</p>
+          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-coffee-espresso">Serviços</p>
           <h2 id="service-form-modal-title" className="mt-1 text-xl font-semibold text-coffee-darkRoast sm:text-2xl">
             {title}
           </h2>
-          <p className="mt-2 text-sm text-coffee-espresso/90">Preencha os dados para manter seu catálogo elegante e pronto para agendamentos.</p>
+          <p className="mt-2 text-sm text-coffee-espresso/90">Preencha os dados do serviço.</p>
           <AutosaveIndicator savedAt={draftSavedAt} restored={wasRestored} />
         </header>
 
@@ -204,7 +204,7 @@ export function ServiceFormModal({ open, mode, initialValues, onClose, onSubmit 
                 value={values.nome}
                 onChange={(event) => setValues((previous) => ({ ...previous, nome: event.target.value }))}
                 error={errors.nome}
-                placeholder="Ex: Limpeza de pele premium"
+                placeholder="Ex: Maquiagem"
                 autoComplete="off"
                 required
               />
@@ -213,7 +213,7 @@ export function ServiceFormModal({ open, mode, initialValues, onClose, onSubmit 
                 value={values.categoria}
                 onChange={(event) => setValues((previous) => ({ ...previous, categoria: event.target.value }))}
                 error={errors.categoria}
-                placeholder="Ex: Estética facial"
+                placeholder="Ex: Sobrancelha"
                 autoComplete="off"
                 required
               />
@@ -226,7 +226,7 @@ export function ServiceFormModal({ open, mode, initialValues, onClose, onSubmit 
                 value={values.valor}
                 onChange={(event) => setValues((previous) => ({ ...previous, valor: event.target.value }))}
                 error={errors.valor}
-                placeholder="0,00"
+                placeholder="R$ 0,00"
                 required
               />
               <Input
@@ -238,7 +238,7 @@ export function ServiceFormModal({ open, mode, initialValues, onClose, onSubmit 
                 value={values.duracaoMinutos}
                 onChange={(event) => setValues((previous) => ({ ...previous, duracaoMinutos: event.target.value }))}
                 error={errors.duracaoMinutos}
-                placeholder="60"
+                placeholder="Ex: 30 minutos"
                 required
               />
             </div>
@@ -255,7 +255,7 @@ export function ServiceFormModal({ open, mode, initialValues, onClose, onSubmit 
                 )}
                 value={values.descricao}
                 onChange={(event) => setValues((previous) => ({ ...previous, descricao: event.target.value }))}
-                placeholder="Descreva os benefícios e etapas do procedimento."
+                placeholder="Digite observações do atendimento"
               />
             </div>
 
@@ -267,7 +267,7 @@ export function ServiceFormModal({ open, mode, initialValues, onClose, onSubmit 
                 onChange={(event) => setValues((previous) => ({ ...previous, imageUrl: event.target.value }))}
                 error={errors.imageUrl}
                 placeholder="https://..."
-                helperText="Campo pronto para integrar com upload no Firebase Storage."
+                
               />
               <label className="flex h-11 items-center gap-2 rounded-xl border border-coffee-cappuccino bg-coffee-latte px-3 text-sm font-medium text-coffee-darkRoast">
                 <input
@@ -293,7 +293,7 @@ export function ServiceFormModal({ open, mode, initialValues, onClose, onSubmit 
               Cancelar
             </Button>
             <Button type="submit" disabled={isSaving} className="w-full bg-coffee-mocha text-coffee-cream hover:bg-coffee-espresso sm:w-auto">
-              {isSaving ? 'Salvando...' : 'Salvar Serviço'}
+              {isSaving ? 'Salvando...' : 'Salvar'}
             </Button>
           </div>
         </form>

@@ -17,11 +17,10 @@ export default function LoginPage() {
           <section className="hidden rounded-2xl border border-coffee-macchiato/70 bg-coffee-cappuccino/35 p-8 lg:block">
             <p className="text-sm uppercase tracking-[0.2em] text-coffee-espresso">Sistema de agendamentos</p>
             <h1 className="mt-3 text-4xl font-semibold leading-tight text-coffee-darkRoast">
-              Acolha suas clientes com uma rotina mais organizada.
+              Gerencie sua agenda com praticidade.
             </h1>
             <p className="mt-4 text-base leading-relaxed text-coffee-espresso">
-              Controle horários, acompanhe atendimentos e mantenha seu dia produtivo com uma experiência visual
-              elegante, profissional e confortável.
+              Acompanhe horários, clientes e serviços em um único lugar.
             </p>
           </section>
 

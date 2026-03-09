@@ -243,8 +243,8 @@ export function TimeBlockModal({
       <section className="relative z-10 max-h-[100dvh] w-full max-w-xl overflow-y-auto overscroll-contain rounded-t-3xl border border-coffee-cappuccino bg-white p-4 pb-[max(1rem,env(safe-area-inset-bottom))] pt-[max(1rem,env(safe-area-inset-top))] shadow-elevated sm:max-h-[88vh] sm:rounded-3xl sm:p-6">
         <header className="mb-5 space-y-1">
           <p className="text-xs font-semibold uppercase tracking-[0.2em] text-coffee-espresso">Agenda</p>
-          <h2 className="text-xl font-semibold text-coffee-darkRoast sm:text-2xl">Bloquear horário</h2>
-          <p className="text-sm text-coffee-espresso">Defina períodos de almoço, pausa ou indisponibilidade.</p>
+          <h2 className="text-xl font-semibold text-coffee-darkRoast sm:text-2xl">Novo bloqueio</h2>
+          <p className="text-sm text-coffee-espresso">Informe o período de bloqueio.</p>
           <AutosaveIndicator savedAt={draftSavedAt} restored={wasRestored} />
         </header>
 
@@ -328,7 +328,7 @@ export function TimeBlockModal({
               rows={3}
               value={values.observacoes}
               onChange={(event) => setValues((previous) => ({ ...previous, observacoes: event.target.value }))}
-              placeholder="Ex.: almoço, compromisso pessoal, pausa técnica..."
+              placeholder="Digite observações do atendimento"
               className="w-full rounded-xl border border-coffee-cappuccino bg-white px-3 py-3 text-base text-coffee-darkRoast outline-none transition focus:border-coffee-mocha focus:ring-2 focus:ring-coffee-latte"
             />
           </label>

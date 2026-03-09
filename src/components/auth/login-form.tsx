@@ -60,8 +60,8 @@ export function LoginForm() {
     <Card className="w-full max-w-md border-coffee-macchiato/80 bg-coffee-latte/95 p-5 shadow-elevated sm:p-8">
       <CardHeader className="mb-5 space-y-2 sm:mb-6">
         <p className="text-xs uppercase tracking-[0.2em] text-coffee-espresso">Ana Beauty Agenda</p>
-        <CardTitle className="text-[1.75rem] leading-tight sm:text-3xl">Faça seu login</CardTitle>
-        <CardDescription>Entre para gerenciar seus agendamentos com segurança.</CardDescription>
+        <CardTitle className="text-[1.75rem] leading-tight sm:text-3xl">Entrar no sistema</CardTitle>
+        <CardDescription>Acesse sua agenda para gerenciar atendimentos.</CardDescription>
       </CardHeader>
 
       <CardContent>
@@ -73,6 +73,7 @@ export function LoginForm() {
             value={email}
             onChange={(event) => setEmail(event.target.value)}
             required
+            placeholder="cliente@email.com"
           />
           <Input
             label="Senha"
@@ -81,6 +82,7 @@ export function LoginForm() {
             value={password}
             onChange={(event) => setPassword(event.target.value)}
             required
+            placeholder="••••••"
           />
 
           {error ? <p className="rounded-lg bg-red-50 p-2 text-sm text-red-700">{error}</p> : null}

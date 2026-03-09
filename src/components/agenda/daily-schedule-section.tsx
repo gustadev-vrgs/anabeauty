@@ -253,7 +253,7 @@ export function DailyScheduleSection({ selectedDate }: DailyScheduleSectionProps
 
         <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
           <button type="button" onClick={() => { setPrefilledStartTime(undefined); setIsAppointmentModalOpen(true); }} disabled={!canCreateAppointment || isBaseDataLoading} className="min-h-12 rounded-xl border border-coffee-mocha bg-coffee-mocha px-4 text-sm font-semibold text-white transition hover:bg-coffee-hazelnut disabled:cursor-not-allowed disabled:opacity-60">
-            + Novo agendamento
+            Novo agendamento
           </button>
           <button type="button" onClick={() => setIsBlockModalOpen(true)} className="min-h-12 rounded-xl border border-coffee-cappuccino bg-white px-4 text-sm font-semibold text-coffee-darkRoast transition hover:bg-coffee-latte">
             Bloquear horário

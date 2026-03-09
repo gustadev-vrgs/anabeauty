@@ -10,18 +10,6 @@ import { createService, deleteService, listServices, updateService } from '@/ser
 import { useCachedCollection } from '@/hooks/use-cached-collection';
 import { sanitizeServicePayload } from '@/lib/security/validators';
 
-const mockServices: Service[] = [
-  {
-    id: 'service-1',
-    name: 'Limpeza de Pele Premium',
-    price: 180,
-    durationMinutes: 75,
-    category: 'Estética Facial',
-    description: 'Higienização profunda com extração e máscara calmante.',
-    availableForBooking: true,
-    createdAt: new Date().toISOString(),
-  },
-];
 
 function formatCurrency(value: number) {
   return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value);
@@ -31,7 +19,6 @@ export function ServicesList() {
   const { data: services, error, loading, updateCache } = useCachedCollection<Service>({
     cacheKey: 'services',
     loader: listServices,
-    fallbackData: mockServices,
   });
   const [search, setSearch] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -99,7 +86,7 @@ export function ServicesList() {
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <Input value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Buscar serviço por nome" aria-label="Buscar serviço" className="sm:max-w-sm" />
         <Button onClick={() => { setEditingServiceId(null); setIsModalOpen(true); }} className="w-full bg-coffee-mocha text-coffee-cream hover:bg-coffee-espresso sm:w-auto">
-          Novo Serviço
+          Novo serviço
         </Button>
       </div>
 

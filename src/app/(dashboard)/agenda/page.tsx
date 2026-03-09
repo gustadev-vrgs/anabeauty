@@ -12,7 +12,7 @@ export default function AgendaPage() {
     <div className="mx-auto w-full max-w-6xl space-y-6 sm:space-y-8 lg:space-y-10">
       <PageTitle
         title="Agenda"
-        subtitle="Escolha um dia no calendário para iniciar o agendamento."
+        subtitle="Agenda de atendimentos"
       />
 
       <div className="mx-auto w-full max-w-5xl lg:max-w-4xl xl:max-w-5xl">
